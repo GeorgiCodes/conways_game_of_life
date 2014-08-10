@@ -1,0 +1,41 @@
+<html>
+  <head>
+    <title> Conway's Game of Life</title>
+  </head>
+<body>
+  <link href="styles.css" type="text/css" rel="stylesheet"></script>
+  <canvas id="screen" width="320" height="320"></canvas><br>
+  <button id="startSimulation">Start Simulation</button> <button id="stopSimulation">Stop Simulation</button>
+  Seed Patterns:
+  <select id="seedSelect">
+    <option value="oscillator">oscillator</option>
+    <option value="glider">glider</option>
+  </select>
+
+  <script src="game.js"></script>
+  <script>
+    // Start game
+    // ----------
+
+    // When the DOM is ready, create (and start) the game.
+    window.onload = function() {
+      console.log("Starting game...");
+      var renderer = new Renderer("screen");
+      var game = new Game(renderer);
+
+      var startButton = document.getElementById("startSimulation");
+      startButton.addEventListener('click', function() {
+        game.start();
+      }, false);
+    };
+  </script>
+
+
+<!-- <link rel="shortcut icon" type="image/png" href="jasmine/lib/jasmine-2.0.1/jasmine_favicon.png">
+<link rel="stylesheet" type="text/css" href="jasmine/lib/jasmine-2.0.1/jasmine.css">
+
+<script type="text/javascript" src="jasmine/lib/jasmine-2.0.1/jasmine.js"></script>
+<script type="text/javascript" src="jasmine/lib/jasmine-2.0.1/jasmine-html.js"></script>
+<script type="text/javascript" src="jasmine/lib/jasmine-2.0.1/boot.js"></script> -->
+<body>
+</html>
