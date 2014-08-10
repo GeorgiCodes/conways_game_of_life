@@ -22,12 +22,6 @@ describe( "Game", function () {
       },
       drawRect: function(x, y, w, h) {
         // do nothing
-      },
-      fill: function() {
-        // do nothing
-      },
-      stroke: function() {
-        // do nothing
       }
     };
 

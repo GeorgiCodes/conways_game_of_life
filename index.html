@@ -4,11 +4,11 @@
   </head>
 <body>
   <link href="styles.css" type="text/css" rel="stylesheet"></script>
-  <canvas id="screen" width="320" height="320"></canvas><br>
+  <canvas id="screen" width="640" height="640"></canvas><br>
   <button id="startSimulation">Start Simulation</button> <button id="stopSimulation">Stop Simulation</button>
   Seed Patterns:
   <select id="seedSelect">
-    <option value="oscillator">oscillator</option>
+    <option value="random">random</option>
     <option value="glider">glider</option>
   </select>
 
@@ -24,8 +24,14 @@
       var game = new Game(renderer);
 
       var startButton = document.getElementById("startSimulation");
+      var stopButton = document.getElementById("stopSimulation");
+      var seedSelect = document.getElementById("seedSelect");
+
       startButton.addEventListener('click', function() {
-        game.start();
+        game.start(seedSelect.value);
+      }, false);
+      stopButton.addEventListener('click', function() {
+        game.stop();
       }, false);
     };
   </script>

@@ -27,15 +27,14 @@
     setStrokeColour: function(colour) {
       this.ctx().strokeStyle = colour;
     },
-    drawRect: function(x, y, w, h) {
+    drawRect: function(x, y, w, h, isAlive) {
       this.ctx().beginPath();
       this.ctx().rect(x, y, w, h);
-    },
-    fill: function() {
-      this.ctx().fill();
-    },
-    stroke: function() {
-      this.ctx().stroke();
+      if (isAlive) {
+        this.ctx().fill();
+      } else {
+        this.ctx().stroke();
+      }
     }
   };
 
@@ -53,20 +52,23 @@
   };
 
   Game.prototype = {
-    start: function() {
+    start: function(seedType) {
       // first tick
       this.init(this.renderer, this.cellSize, this.cells);
-      this.seed(this.cells);
+      this.seed(seedType, this.cells);
       this.updateGameBoard(this.renderer, this.cellSize, this.cells);
 
       // TODO: implement UI slider to chage interval time
       self = this;
       this.intervalId = setInterval(function() {
         self.tick();
-      }, 500);
+      }, 20);
     },
     stop: function() {
-      clearInterval(intervalId);
+      clearInterval(this.intervalId);
+      // reset cells
+      this.cells.clear();
+      this.init(this.renderer, this.cellSize, this.cells);
     },
     tick: function() {
       // apply game logic and re-render canvas
@@ -76,12 +78,11 @@
       console.log("Init all cells as DEAD.");
       var numCells = this.numCells(renderer.gameSize(), cellSize);
 
-      // init to be dead cells (eg. "01" => 0)
+      // init to be dead cells 
       for (var i = 0; i < numCells.y; i++) {
         for (var j = 0; j < numCells.x; j++) {
           var key = this.makeCellKey(j, i);
-          cells.set(key, 0);
-          console.log("made cell: " + key);
+          cells.set(key, false);
         }
       }
     },
@@ -102,40 +103,51 @@
 
       return {x: numCellsX, y: numCellsY, maxX: numCellsX -1, maxY: numCellsY -1};
     },
-    seed: function(cells) {
+    seed: function(seedType, cells) {
       console.log("Seeding board");
+      switch (seedType) {
+        case "random":
+          self = this;
+          cells.forEach(function(value, key, cells) {
+            var randomNumber = Math.random() >= 0.5;
+            self.cells.set(key, randomNumber);
+          });
+          break;
+      }
+
+
       // TODO: refactor
       // init board with some starting values
-      // cells.set(this.makeCellKey(15, 0), 1);
-      // cells.set(this.makeCellKey(14, 0), 1);
-      // cells.set(this.makeCellKey(13, 0), 1);
-      // cells.set(this.makeCellKey(13, 1), 1);
+      // cells.set(this.makeCellKey(15, 0), true);
+      // cells.set(this.makeCellKey(14, 0), true);
+      // cells.set(this.makeCellKey(13, 0), true);
+      // cells.set(this.makeCellKey(13, 1), true);
       //
       // // oscilator
-      // cells.set(this.makeCellKey(1, 0), 1);
-      // cells.set(this.makeCellKey(1, 1), 1);
-      // cells.set(this.makeCellKey(1, 2), 1);
+      // cells.set(this.makeCellKey(1, 0), true);
+      // cells.set(this.makeCellKey(1, 1), true);
+      // cells.set(this.makeCellKey(1, 2), true);
       //
       // // toad
-      cells.set(this.makeCellKey(4, 4), 1);
-      cells.set(this.makeCellKey(5, 4), 1);
-      cells.set(this.makeCellKey(6, 4), 1);
-      cells.set(this.makeCellKey(3, 5), 1);
-      cells.set(this.makeCellKey(4, 5), 1);
-      cells.set(this.makeCellKey(5, 5), 1);
+      // cells.set(this.makeCellKey(4, 4), true);
+      // cells.set(this.makeCellKey(5, 4), true);
+      // cells.set(this.makeCellKey(6, 4), true);
+      // cells.set(this.makeCellKey(3, 5), true);
+      // cells.set(this.makeCellKey(4, 5), true);
+      // cells.set(this.makeCellKey(5, 5), true);
 
       // glider
-      // cells.set(this.makeCellKey(11, 10), 1);
-      // cells.set(this.makeCellKey(11, 11), 1);
-      // cells.set(this.makeCellKey(12, 11), 1);
-      // cells.set(this.makeCellKey(10, 12), 1);
-      // cells.set(this.makeCellKey(12, 12), 1);
+      // cells.set(this.makeCellKey(1, 3), true);
+      // cells.set(this.makeCellKey(1, 4), true);
+      // cells.set(this.makeCellKey(2, 4), true);
+      // cells.set(this.makeCellKey(2, 5), true);
+      // cells.set(this.makeCellKey(0, 5), true);
 
       // 4 square
-      // cells.set(this.makeCellKey(7, 14), 1);
-      // cells.set(this.makeCellKey(8, 14), 1);
-      // cells.set(this.makeCellKey(6, 15), 1);
-      // cells.set(this.makeCellKey(9, 15), 1);
+      // cells.set(this.makeCellKey(7, 14), true);
+      // cells.set(this.makeCellKey(8, 14), true);
+      // cells.set(this.makeCellKey(6, 15), true);
+      // cells.set(this.makeCellKey(9, 15), true);
 
       // light-weight space ship
     },
@@ -149,7 +161,6 @@
     countNeighbours: function(x, y, cells) {
       // get values of adjacent cells
       var numNbrs = 0;
-      // var x = parseInt(x);
 
       var topLeftNbr = cells.get(this.makeCellKey(x-1, y-1));
       var topMidNbr = cells.get(this.makeCellKey(x, y-1));
@@ -185,36 +196,37 @@
       var cellsToUpdate = new Map();
 
       var self = this;
-      cells.forEach(function(value, key, cells) {
+      cells.forEach(function(isAlive, key, cells) {
         var keyArr = self.parseCellKey(key);
         var numNbrs = self.countNeighbours(keyArr[0], keyArr[1], cells);
 
-        if (value == 1) {
+        if (isAlive) {
           switch (numNbrs) {
             case 0:
             case 1:
-              cellsToUpdate.set(key, 0);
-              console.log("cell x: " + keyArr[0] + " y:" + keyArr[0] + " now dead " + cellsToUpdate.get(key));
+              cellsToUpdate.set(key, false);
+              console.log("cell x: " + keyArr[0] + " y:" + keyArr[1] + " now dead " + cellsToUpdate.get(key));
               break;
             case 2:
             case 3:
+              // keep alive
               break;
             case 4:
             default:
-              cellsToUpdate.set(key, 0);
-              console.log("cell x: " + keyArr[0] + " y:" + keyArr[0] + " now dead " + cellsToUpdate.get(key));
+              cellsToUpdate.set(key, false);
+              console.log("cell x: " + keyArr[0] + " y:" + keyArr[1] + " now dead " + cellsToUpdate.get(key));
           }
         } else {
-          if (numNbrs >= 3) {
-            cellsToUpdate.set(key, 1);
-            console.log("cell x: " + keyArr[0] + " y:" + keyArr[0] + " now alive " + cellsToUpdate.get(key));
+          if (numNbrs == 3) {
+            cellsToUpdate.set(key, true);
+            console.log("cell x: " + keyArr[0] + " y:" + keyArr[1] + " now alive " + cellsToUpdate.get(key));
           }
         }
 
       })
 
-      cellsToUpdate.forEach(function(value, key, cellsToUpdate) {
-        cells.set(key, value);
+      cellsToUpdate.forEach(function(isAlive, key, cellsToUpdate) {
+        cells.set(key, isAlive);
       })
     },
     updateGameBoard: function(renderer, cellSize, cells) {
@@ -228,17 +240,12 @@
       // naiive approach to repaint canvas is O(numCells)
       var self = this;
 
-      cells.forEach(function(value, key, cells) {
+      cells.forEach(function(isAlive, key, cells) {
         var keyArr = self.parseCellKey(key);
         var x = keyArr[0];
         var y = keyArr[1];
 
-        renderer.drawRect(x*cellSize, y*cellSize, cellSize, cellSize);
-        if (value == 1) {
-          renderer.fill();
-        } else {
-          renderer.stroke();
-        }
+        renderer.drawRect(x*cellSize, y*cellSize, cellSize, cellSize, isAlive);
       })
     }
   };
