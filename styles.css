@@ -1,8 +1,12 @@
+#content {
+  margin: auto;
+  width: 900px;
+}
+
 body {
-    background: lightblue;
+  background: #fff;
 }
 
 canvas {
-    background: #fff;
-    margin: 20px;
+  background: #fff;
 }

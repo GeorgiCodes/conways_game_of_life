@@ -1,16 +1,19 @@
 <html>
   <head>
-    <title> Conway's Game of Life</title>
+    <title>Conway's Game of Life</title>
   </head>
 <body>
   <link href="styles.css" type="text/css" rel="stylesheet"></script>
-  <canvas id="screen" width="640" height="640"></canvas><br>
+  <div id="content">
+  <h1>Conway's Game of Life</h1>
+  <canvas id="screen" width="900" height="440"></canvas><br>
   <button id="startSimulation">Start Simulation</button> <button id="stopSimulation">Stop Simulation</button>
   Seed Patterns:
   <select id="seedSelect">
     <option value="random">random</option>
     <option value="glider">glider</option>
   </select>
+</div>
 
   <script src="game.js"></script>
   <script>

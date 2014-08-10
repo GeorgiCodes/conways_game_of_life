@@ -48,7 +48,7 @@
     // const ALIVE = 1;
     this.renderer = renderer;
     this.cells = new Map();
-    this.cellSize = 10;  // TODO: have user set via slider
+    this.cellSize = 5;  // TODO: have user set via slider
   };
 
   Game.prototype = {
@@ -62,7 +62,7 @@
       self = this;
       this.intervalId = setInterval(function() {
         self.tick();
-      }, 20);
+      }, 1);
     },
     stop: function() {
       clearInterval(this.intervalId);
@@ -78,7 +78,7 @@
       console.log("Init all cells as DEAD.");
       var numCells = this.numCells(renderer.gameSize(), cellSize);
 
-      // init to be dead cells 
+      // init to be dead cells
       for (var i = 0; i < numCells.y; i++) {
         for (var j = 0; j < numCells.x; j++) {
           var key = this.makeCellKey(j, i);
@@ -114,8 +114,6 @@
           });
           break;
       }
-
-
       // TODO: refactor
       // init board with some starting values
       // cells.set(this.makeCellKey(15, 0), true);
@@ -180,8 +178,6 @@
       numNbrs += botMidNbr != undefined ? botMidNbr : 0;
       numNbrs += botRightNbr != undefined ? botRightNbr : 0;
 
-      // console.log("Num nbrs of cell x: " + x + " y: " + y + " is: " + numNbrs);
-
       return numNbrs;
     },
     applyRulesToCells: function(cells) {
@@ -192,7 +188,7 @@
       //   Each cell with two or three neighbors survives.
       // For a space that is 'empty' or 'unpopulated'
       //   Each cell with three neighbors becomes populated.
-      console.log("Applying rules to cells");
+      console.log("Applying game rules to cells");
       var cellsToUpdate = new Map();
 
       var self = this;
@@ -232,7 +228,7 @@
     updateGameBoard: function(renderer, cellSize, cells) {
       // Clear away the drawing from the previous tick.
       renderer.clearRect();
-      renderer.setStrokeColour("grey");
+      renderer.setStrokeColour("white");
 
       this.repaintNaiive(renderer, cellSize, cells);
     },
