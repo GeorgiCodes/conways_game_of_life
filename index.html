@@ -3,33 +3,41 @@
     <title>Conway's Game of Life</title>
   </head>
 <body>
-  <link href="styles.css" type="text/css" rel="stylesheet"></script>
+  <link href="public/css/styles.css" type="text/css" rel="stylesheet"></script>
   <div id="content">
   <h1>Conway's Game of Life</h1>
-  <canvas id="screen" width="900" height="440"></canvas><br>
+  <!-- <canvas id="screen" width="900" height="440"></canvas><br> -->
+  <canvas id="screen" width="100" height="100"></canvas><br>
+
+  <button id="stepButton">Step</button>
   <button id="startSimulation">Start Simulation</button> <button id="stopSimulation">Stop Simulation</button>
-  Seed Patterns:
-  <select id="seedSelect">
+  <br>
+  Patterns:
     <option value="random">random</option>
     <option value="glider">glider</option>
-  </select>
+    <option value="oscillator">oscillator</option>
+    <option value="glider">glider</option>
 </div>
 
-  <script src="game.js"></script>
+  <script src="bower_components/underscore/underscore.js"></script>
+  <script src="public/js/game.js"></script>
   <script>
     // Start game
     // ----------
 
     // When the DOM is ready, create (and start) the game.
     window.onload = function() {
-      console.log("Starting game...");
       var renderer = new Renderer("screen");
       var game = new Game(renderer);
 
+      var stepButton = document.getElementById("stepButton");
       var startButton = document.getElementById("startSimulation");
       var stopButton = document.getElementById("stopSimulation");
       var seedSelect = document.getElementById("seedSelect");
 
+      stepButton.addEventListener('click', function() {
+        game.step(seedSelect.value);
+      }, false);
       startButton.addEventListener('click', function() {
         game.start(seedSelect.value);
       }, false);

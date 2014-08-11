@@ -1,0 +1,13 @@
+{
+  "name": "conways_game_of_life",
+  "version": "0.0.0",
+  "description": "An optimized version of Conway's Game of Life",
+  "main": "Gruntfile.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "devDependencies": {
+    "grunt": "^0.4.5",
+    "grunt-contrib-jshint": "^0.10.0"
+  }
+}

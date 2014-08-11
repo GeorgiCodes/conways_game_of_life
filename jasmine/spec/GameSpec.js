@@ -30,15 +30,32 @@ describe( "Game", function () {
       game = new Game(mockRenderer);
     });
 
-    describe("count neighbours", function () {
-      it("counts no neighbours for far left", function () {
-        res = game.countNeighbours(0, 0, cells);
-        expect(res).toEqual(0);
+    describe("count neighbours for oscillator", function () {
+      it("initializes pattern", function () {
+        game.seed("oscillator");
+
+        expect(game.aliveCells.size).toEqual(3);
+        expect(game.aliveCells.has("1/0")).toBe(true);
+        expect(game.aliveCells.has("1/1")).toBe(true);
+        expect(game.aliveCells.has("1/2")).toBe(true);
+        expect(game.cells.get("1/0").isAlive).toBe(true);
+        expect(game.cells.get("1/1").isAlive).toBe(true);
+        expect(game.cells.get("1/2").isAlive).toBe(true);
       });
 
-      it("counts no neighbours for far left", function () {
-        res = game.countNeighbours(0, 0, cells);
-        expect(res).toEqual(0);
+      it("counts neighbours of first iteration", function () {
+        game.seed("oscillator");
+        // game.step();
+        expect(game.countAliveNeighbours(game.cells.get("1/0"))).toEqual(1);
+        expect(game.countAliveNeighbours(game.cells.get("1/1"))).toEqual(2);
+        expect(game.countAliveNeighbours(game.cells.get("1/2"))).toEqual(1);
+
+        expect(game.countAliveNeighbours(game.cells.get("0/1"))).toEqual(3);
+        expect(game.countAliveNeighbours(game.cells.get("2/1"))).toEqual(3);
+
+        expect(game.aliveCells.has("0/1")).toBe(true);
+        expect(game.aliveCells.has("1/1")).toBe(true);
+        expect(game.aliveCells.has("2/2")).toBe(true);
       });
     });
 });
