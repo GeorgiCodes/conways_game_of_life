@@ -60,11 +60,15 @@ Patterns
       doc.setAttribute('data-useragent', navigator.userAgent);
 </script>
 <script src="public/js/game3.js"></script>
+<script src="public/js/dataWranger.js"></script>
+<script src="public/js/renderer.js"></script>
+
 <script>
   // Start game
   // ----------
 
   // When the DOM is ready, create (and start) the game.
+  // TODO: move this js to own js file eg button evets/handlers
   window.onload = function() {
     var renderer = new Renderer("screen");
     var game = new Game(renderer);
