@@ -49,7 +49,7 @@
 
     this.cells = new Map();
     this.aliveCells = new Map();
-    // this.initCells();
+    this.init();
   };
 
   Game.prototype = {
@@ -63,7 +63,7 @@
       var self = this;
       this.intervalId = setInterval(function() {
         self.tick();
-      }, 1000);
+      }, 60);
       console.log("Starting animation with id: " + this.intervalId);
     },
     stop: function() {
@@ -83,20 +83,20 @@
       this.cells.clear();
       this.aliveCells.clear();
       var numCells = this.numCells(this.renderer.gameSize(), this.cellSize);
+      console.log("GameBoard initialized to width: " + numCells.x + " and height: " + numCells.y);
 
       // init cells to be dead
       for (var i = 0; i < numCells.y; i++) {
         for (var j = 0; j < numCells.x; j++) {
           var cell = new Cell(j, i, false, numCells);
-          console.log("Created cell: " + cell.toString());
           this.cells.set(cell.toString(), cell);
         }
       }
+      console.log("Finished initializing cells");
     },
     numCells: function(gameSize, cellSize) {
       var numCellsX = gameSize.x / cellSize;
       var numCellsY = gameSize.y / cellSize;
-      console.log("GameBoard is cells wide: " + numCellsX + " and cells high: " + numCellsY);
 
       return {x: numCellsX, y: numCellsY, maxX: numCellsX -1, maxY: numCellsY -1};
     },
@@ -110,15 +110,13 @@
       // TODO: refactor
       switch (seedType) {
         case "random":
-          this.cells.forEach(function(value, key, cells) {
+          // TODO: fix this is broken
+          this.cells.forEach(function(cell, key, cells) {
             var randomNumber = Math.random() >= 0.5;
-            var keyArr = key.split("/");
-            keyArr[0] = parseInt(keyArr[0]);
-            keyArr[1] = parseInt(keyArr[1]);
-            var cell1 = new Cell(keyArr[0], keyArr[1], randomNumber, gameSize);
+            var cell1 = new Cell(cell.x, cell.y, randomNumber, gameSize);
 
-            self.cells.set(key, cell1);
-            if (cell1.isAlive) {
+            self.cells.set(cell1.toString(), cell1);
+            if (cell1.isAlive == true) {
               self.aliveCells.set(cell1.toString(), cell1);
             }
           });
@@ -160,68 +158,134 @@
 
       // paint
       this.updateGameBoard(this.aliveCells);
-      console.log("game state so far after seeding");
-      console.log(this.cells.get("1/0"));
-      console.log(this.cells.get("1/1"));
-      console.log(this.cells.get("1/2"));
-
-      // TODO: refactor
-      // init board with some starting values
-      // cells.set(this.makeCellKey(15, 0), true);
-      // cells.set(this.makeCellKey(14, 0), true);
-      // cells.set(this.makeCellKey(13, 0), true);
-      // cells.set(this.makeCellKey(13, 1), true);
-      //
-      // // toad
-      // cells.set(this.makeCellKey(4, 4), true);
-      // cells.set(this.makeCellKey(5, 4), true);
-      // cells.set(this.makeCellKey(6, 4), true);
-      // cells.set(this.makeCellKey(3, 5), true);
-      // cells.set(this.makeCellKey(4, 5), true);
-      // cells.set(this.makeCellKey(5, 5), true);
-
-      // light-weight space ship
+    },
+    // TODO: remove me
+    makeCellKey: function(x, y) {
+      return x + "/" + y;
     },
     // runs the main game logic.
     step: function() {
+      console.log("**********************************************************");
       var cellsToUpdate = this.applyRulesToCells();
       this.updateGameBoard(cellsToUpdate);
+      console.log("**********************************************************");
     },
     applyRulesToCells: function() {
       console.log("Applying game rules to cells.");
       console.log("Alive cells total: " + this.aliveCells.size);
       var cellsToUpdate = new Map();
 
-
-      console.log("game state so far in applyRulesToCells");
-      console.log(this.cells.get("1/0"));
-      console.log(this.cells.get("1/1"));
-      console.log(this.cells.get("1/2"));
-
-
-      // TODO: refactor, this is ugly
-      var self = this;
-      this.cells.forEach(function(cell, key, array) {
-        // get neighbour coordinates of each cell that is currently alive
-        // for each neighbour coordinate apply cell life logic
-        // self.countAliveNeighbours(cell);
-        self.stepLogic(cell, cellsToUpdate);
-      });
+      // switch algorithms depending on how many live cells are on the board
+      if (this.aliveCells.size > 50) {
+        this.algorithm2(cellsToUpdate);
+      } else {
+        this.algorithm1(cellsToUpdate);
+      }
 
       return cellsToUpdate;
     },
+    algorithm1: function(cellsToUpdate) {
+      console.log("Applying algorithm1 cells");
+
+      var uniqueCellsToCheck = new Set();
+
+      // TODO: refactor, this is ugly
+      var self = this;
+      //TODO: this map returns a length of 5 even when something is deleted, its weird!
+      this.aliveCells.forEach(function(cell, key, array) {
+        if (cell != undefined) {
+          cell.initNeighbours();
+          // get neighbour coordinates of each cell that is currently alive
+          // for each neighbour coordinate apply cell life logic
+          uniqueCellsToCheck.add(key);
+          cell.neighbours.forEach(function(key, index, array) {
+            uniqueCellsToCheck.add(key);
+          });
+        }
+      });
+
+      console.log("Number of unique cells to check: " + uniqueCellsToCheck.size);
+      uniqueCellsToCheck.forEach(function(key, index, array) {
+        var cell = self.cells.get(key);
+        self.stepLogic(cell, cellsToUpdate);
+      });
+    },
+    algorithm2: function(cellsToUpdate) {
+      console.log("Applying algorithm2 cells");
+      var numCells = this.numCells(this.renderer.gameSize(), this.cellSize);
+
+      var self = this;
+      this.cells.forEach(function(cell, key, cells) {
+        var numNbrs = self.countAlgorithm2Neighbours(cell.x, cell.y, cells);
+
+        if (cell.isAlive) {
+          switch (numNbrs) {
+            case 0:
+            case 1:
+              cellsToUpdate.set(key, new Cell(cell.x, cell.y, false, numCells));
+              // console.log("cell x: " + keyArr[0] + " y:" + keyArr[1] + " now dead " + cellsToUpdate.get(key));
+              break;
+            case 2:
+            case 3:
+              // keep alive
+              cellsToUpdate.set(key, new Cell(cell.x, cell.y, true, numCells));
+              break;
+            case 4:
+            default:
+              cellsToUpdate.set(key, new Cell(cell.x, cell.y, false, numCells));
+              // console.log("cell x: " + keyArr[0] + " y:" + keyArr[1] + " now dead " + cellsToUpdate.get(key));
+          }
+        } else {
+          if (numNbrs == 3) {
+            cellsToUpdate.set(key, new Cell(cell.x, cell.y, true, numCells));
+            // console.log("cell x: " + keyArr[0] + " y:" + keyArr[1] + " now alive " + cellsToUpdate.get(key));
+          }
+        }
+
+      })
+    },
+    countAlgorithm2Neighbours: function(x, y, cells) {
+      // get values of adjacent cells
+      var numNbrs = 0;
+
+      var topLeftNbr = cells.get(this.makeCellKey(x-1, y-1));
+      var topMidNbr = cells.get(this.makeCellKey(x, y-1));
+      var topRightNbr = cells.get(this.makeCellKey(x+1, y-1));
+      var rightNbr = cells.get(this.makeCellKey(x+1, y));
+      var leftNbr = cells.get(this.makeCellKey(x-1, y));
+      var botLeftNbr = cells.get(this.makeCellKey(x-1, y+1));
+      var botMidNbr = cells.get(this.makeCellKey(x, y+1));
+      var botRightNbr = cells.get(this.makeCellKey(x+1, y+1));
+
+      numNbrs += topLeftNbr != undefined ? topLeftNbr : 0;
+      numNbrs += topMidNbr != undefined ? topMidNbr : 0;
+      numNbrs += topRightNbr != undefined ? topRightNbr : 0;
+      numNbrs += rightNbr != undefined ? rightNbr : 0;
+      numNbrs += leftNbr != undefined ? leftNbr : 0;
+      numNbrs += botLeftNbr != undefined ? botLeftNbr : 0;
+      numNbrs += botMidNbr != undefined ? botMidNbr : 0;
+      numNbrs += botRightNbr != undefined ? botRightNbr : 0;
+
+      return numNbrs;
+    },
     countAliveNeighbours: function(cell) {
+      cell.initNeighbours();
       var nbrs = cell.neighbours; // list of cell coords
       var numNbrs = 0;
 
       var self = this;
       nbrs.forEach(function(key, index, array) {
         var nbr = self.cells.get(key);
-        numNbrs += nbr.isAlive ? 1 : 0;
+        numNbrs += nbr != undefined && nbr.isAlive ? 1 : 0;
       });
       return numNbrs;
     },
     stepLogic: function(cell, cellsToUpdate) {
+      if (cell == undefined) {
+        console.log("should not be undefined");
+        return;
+      };
+
       var numNbrs = this.countAliveNeighbours(cell);
       var numCells = this.numCells(this.renderer.gameSize(), this.cellSize);
 
@@ -229,26 +293,41 @@
         switch (numNbrs) {
           case 0:
           case 1:
-            cellsToUpdate.set(cell.toString(), new Cell(cell.x, cell.y, false, numCells));
+            var deadCell = new Cell(cell.x, cell.y, false, numCells);
+            cellsToUpdate.set(cell.toString(), deadCell);
+            this.aliveCells.delete(cell.toString());
+            console.log("just deleted" + cell.toString());
             console.log("cell x: " + cell.x + " y:" + cell.y + " now dead ");
             break;
           case 2:
           case 3:
             // keep alive
-            cellsToUpdate.set(cell.toString(), new Cell(cell.x, cell.y, true, numCells));
+            var aliveCell = new Cell(cell.x, cell.y, true, numCells);
+            cellsToUpdate.set(cell.toString(), aliveCell);
+            this.aliveCells.set(cell.toString(), aliveCell);
             console.log("cell x: " + cell.x + " y:" + cell.y + " stayed alive ");
             break;
           case 4:
           default:
-            cellsToUpdate.set(cell.toString(), new Cell(cell.x, cell.y, false, numCells));
+            var deadCell = new Cell(cell.x, cell.y, false, numCells);
+            cellsToUpdate.set(cell.toString(), deadCell);
+            this.aliveCells.delete(cell.toString());
+            console.log("just deleted" + cell.toString());
             console.log("cell x: " + cell.x + " y:" + cell.y + " now dead ");
         }
       } else {
         if (numNbrs == 3) {
-          cellsToUpdate.set(cell.toString(), new Cell(cell.x, cell.y, true, numCells));
+          var aliveCell = new Cell(cell.x, cell.y, true, numCells);
+          cellsToUpdate.set(cell.toString(), aliveCell);
+          this.aliveCells.set(cell.toString(), aliveCell);
           console.log("cell x: " + cell.x + " y:" + cell.y + " now alive " );
         }
       }
+
+      console.log("size after updated alive cells" + this.aliveCells.size);
+      this.aliveCells.forEach(function(value, key, map) {
+          console.log("Alive Key: %s, Value: %s", key, value);
+      });
     },
     initGameBoard: function() {
       this.renderer.clearRect();
@@ -272,7 +351,6 @@
     this.numCells = numCells;
     this.isAlive = isAlive;
     this.neighbours = new Set();
-    this.initNeighbours();
   };
 
   Cell.prototype = {
@@ -296,13 +374,13 @@
       var x = this.x;
       var y = this.y;
       var numCells = this.numCells;
+      console.log("Init neighbours for x: " + x + " and y " + y);
 
       var startPosX = (x-1 < 0) ? x : x-1;
       var startPosY = (y-1 < 0) ? y : y-1;
       var endPosX = (x+1 > numCells.x-1) ? x : x+1;
       var endPosY = (y+1 > numCells.y-1) ? y : y+1;
 
-      // TODO: remove self from list of neighbours?
       // add neighbours as list of dead cells
       for (var rowNum = startPosY; rowNum <= endPosY; rowNum++) {
         for (var colNum = startPosX; colNum <= endPosX; colNum++) {

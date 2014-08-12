@@ -1,58 +1,95 @@
-<html>
-  <head>
-    <title>Conway's Game of Life</title>
-  </head>
+<!doctype html>
+<!--[if IE 9]><html class="lt-ie10" lang="en" > <![endif]-->
+<html class="no-js" lang="en" data-useragent="Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.2; Trident/6.0)">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Conway's Game of Life</title>
+<link rel="stylesheet" href="bower_components/foundation/css/foundation.css"/>
+<script src="bower_components/modernizr/modernizr.js"></script>
+</head>
 <body>
-  <link href="public/css/styles.css" type="text/css" rel="stylesheet"></script>
-  <div id="content">
-  <h1>Conway's Game of Life</h1>
-  <!-- <canvas id="screen" width="900" height="440"></canvas><br> -->
-  <canvas id="screen" width="100" height="100"></canvas><br>
 
-  <button id="stepButton">Step</button>
-  <button id="startSimulation">Start Simulation</button> <button id="stopSimulation">Stop Simulation</button>
-  <br>
-  Patterns:
-    <option value="random">random</option>
-    <option value="glider">glider</option>
-    <option value="oscillator">oscillator</option>
-    <option value="glider">glider</option>
+<div class="row">
+<div class="large-12 columns">
+<h1>Conway's Game of Life <small></small></h1>
+<hr/>
+</div>
 </div>
 
-  <script src="bower_components/underscore/underscore.js"></script>
-  <script src="public/js/game.js"></script>
-  <script>
-    // Start game
-    // ----------
+<div class="row">
+<div class="large-12 columns">
+<canvas id="screen" width="900" height="440"></canvas><br>
+</div>
+</div>
 
-    // When the DOM is ready, create (and start) the game.
-    window.onload = function() {
-      var renderer = new Renderer("screen");
-      var game = new Game(renderer);
-
-      var stepButton = document.getElementById("stepButton");
-      var startButton = document.getElementById("startSimulation");
-      var stopButton = document.getElementById("stopSimulation");
-      var seedSelect = document.getElementById("seedSelect");
-
-      stepButton.addEventListener('click', function() {
-        game.step(seedSelect.value);
-      }, false);
-      startButton.addEventListener('click', function() {
-        game.start(seedSelect.value);
-      }, false);
-      stopButton.addEventListener('click', function() {
-        game.stop();
-      }, false);
-    };
-  </script>
+<div class="row">
+<div class="large-12 columns">
+Game Controls
+<ul class="button-group">
+  <li><a href="#" class="button" id="startSim">Start / Stop</a></li>
+  <li><a href="#" class="button" id="stepSim">Step</a></li>
+</ul>
+<hr/>
+Patterns
+<ul class="button-group">
+  <li><a href="#" class="button" id="random">Random</a></li>
+  <li><a href="#" class="button" id="oscillator">Oscillator</a></li>
+  <li><a href="#" class="button" id="glider">Glider</a></li>
+</ul>
+</div>
+</div>
 
 
-<!-- <link rel="shortcut icon" type="image/png" href="jasmine/lib/jasmine-2.0.1/jasmine_favicon.png">
-<link rel="stylesheet" type="text/css" href="jasmine/lib/jasmine-2.0.1/jasmine.css">
+<footer class="row">
+<div class="large-12 columns">
+<hr/>
+<div class="row">
+<div class="large-12 columns">
+</div>
+</div>
+</div>
+</footer>
+<script src="bower_components/jquery/dist/jquery.js"></script>
+<script src="bower_components/foundation/js/foundation.js"></script>
+<script>
+      $(document).foundation();
 
-<script type="text/javascript" src="jasmine/lib/jasmine-2.0.1/jasmine.js"></script>
-<script type="text/javascript" src="jasmine/lib/jasmine-2.0.1/jasmine-html.js"></script>
-<script type="text/javascript" src="jasmine/lib/jasmine-2.0.1/boot.js"></script> -->
-<body>
+      var doc = document.documentElement;
+      doc.setAttribute('data-useragent', navigator.userAgent);
+</script>
+<script src="public/js/game.js"></script>
+<script>
+  // Start game
+  // ----------
+
+  // When the DOM is ready, create (and start) the game.
+  window.onload = function() {
+    var renderer = new Renderer("screen");
+    var game = new Game(renderer);
+
+    var stepButton = document.getElementById("stepSim");
+    var startButton = document.getElementById("startSim");
+    var oscillator = document.getElementById("oscillator");
+    var glider = document.getElementById("glider");
+    var random = document.getElementById("random");
+
+    stepButton.addEventListener('click', function() {
+      game.step();
+    }, false);
+    startButton.addEventListener('click', function() {
+      game.start();
+    }, false);
+    oscillator.addEventListener('click', function() {
+      game.seed("oscillator");
+    }, false);
+    glider.addEventListener('click', function() {
+      game.seed("glider");
+    }, false);
+    random.addEventListener('click', function() {
+      game.seed("random");
+    }, false);
+  };
+</script>
+</body>
 </html>

@@ -1,0 +1,49 @@
+<html>
+  <head>
+    <title> Conway's Game of Life</title>
+  </head>
+<body>
+  <link href="public/css/styles.css" type="text/css" rel="stylesheet"></script>
+  <canvas id="screen" width="640" height="640"></canvas><br>
+  <button id="startSimulation">Start Simulation</button> <button id="stopSimulation">Stop Simulation</button>
+  Seed Patterns:
+  <select id="seedSelect">
+    <option value="random">random</option>
+    <option value="glider">glider</option>
+    <option value="oscillator">oscillator</option>
+
+  </select>
+
+<script src="public/js/gameOld.js"></script>
+  <script>
+    // Start game
+    // ----------
+
+    // When the DOM is ready, create (and start) the game.
+    window.onload = function() {
+      console.log("Starting game...");
+      var renderer = new Renderer("screen");
+      var game = new Game(renderer);
+
+      var startButton = document.getElementById("startSimulation");
+      var stopButton = document.getElementById("stopSimulation");
+      var seedSelect = document.getElementById("seedSelect");
+
+      startButton.addEventListener('click', function() {
+        game.start(seedSelect.value);
+      }, false);
+      stopButton.addEventListener('click', function() {
+        game.stop();
+      }, false);
+    };
+  </script>
+
+
+<!-- <link rel="shortcut icon" type="image/png" href="jasmine/lib/jasmine-2.0.1/jasmine_favicon.png">
+<link rel="stylesheet" type="text/css" href="jasmine/lib/jasmine-2.0.1/jasmine.css">
+
+<script type="text/javascript" src="jasmine/lib/jasmine-2.0.1/jasmine.js"></script>
+<script type="text/javascript" src="jasmine/lib/jasmine-2.0.1/jasmine-html.js"></script>
+<script type="text/javascript" src="jasmine/lib/jasmine-2.0.1/boot.js"></script> -->
+<body>
+</html>
