@@ -62,7 +62,7 @@
       var self = this;
       this.intervalId = setInterval(function() {
         self.tick();
-      }, 60);
+      }, 40);
       console.log("Starting animation with id: " + this.intervalId);
     },
     stop: function() {
@@ -115,7 +115,6 @@
             for (var j = 0; j < this.numCells().y; j++) {
               var randBool = Math.random() >= 0.5;
               this.setCell(i, j, randBool);
-              cellsToUpdate.push(new CellSmall(i, j, randBool));
             }
           }
           break;
@@ -125,30 +124,82 @@
           this.setCell(2, 4, true);
           this.setCell(2, 5, true);
           this.setCell(0, 5, true);
-
-          cellsToUpdate.push(new CellSmall(1, 3, true));
-          cellsToUpdate.push(new CellSmall(1, 4, true));
-          cellsToUpdate.push(new CellSmall(2, 4, true));
-          cellsToUpdate.push(new CellSmall(2, 5, true));
-          cellsToUpdate.push(new CellSmall(0, 5, true));
           break;
         case "oscillator":
           this.setCell(1, 0, true);
           this.setCell(1, 1, true);
           this.setCell(1, 2, true);
-
-          cellsToUpdate.push(new CellSmall(1, 0, true));
-          cellsToUpdate.push(new CellSmall(1, 1, true));
-          cellsToUpdate.push(new CellSmall(1, 2, true));
           break;
+        case "gosperGun":
+          this.cellsArr[1][5] = true;
+          this.cellsArr[1][6] = true;
+          this.cellsArr[2][5] = true;
+          this.cellsArr[2][6] = true;
+          this.cellsArr[11][5] = true;
+          this.cellsArr[11][6] = true;
+          this.cellsArr[11][7] = true;
+          this.cellsArr[12][4] = true;
+          this.cellsArr[12][8] = true;
+          this.cellsArr[13][3] = true;
+          this.cellsArr[13][9] = true;
+          this.cellsArr[14][3] = true;
+          this.cellsArr[14][9] = true;
+          this.cellsArr[15][6] = true;
+          this.cellsArr[16][4] = true;
+          this.cellsArr[16][8] = true;
+          this.cellsArr[17][5] = true;
+          this.cellsArr[17][6] = true;
+          this.cellsArr[17][7] = true;
+          this.cellsArr[18][6] = true;
+          this.cellsArr[21][3] = true;
+          this.cellsArr[21][4] = true;
+          this.cellsArr[21][5] = true;
+          this.cellsArr[22][3] = true;
+          this.cellsArr[22][4] = true;
+          this.cellsArr[22][5] = true;
+          this.cellsArr[23][2] = true;
+          this.cellsArr[23][6] = true;
+          this.cellsArr[25][1] = true;
+          this.cellsArr[25][2] = true;
+          this.cellsArr[25][6] = true;
+          this.cellsArr[25][7] = true;
+          this.cellsArr[35][3] = true;
+          this.cellsArr[35][4] = true;
+          this.cellsArr[36][3] = true;
+          this.cellsArr[36][4] = true;
+          this.cellsArr[35][22] = true;
+          this.cellsArr[35][23] = true;
+          this.cellsArr[35][25] = true;
+          this.cellsArr[36][22] = true;
+          this.cellsArr[36][23] = true;
+          this.cellsArr[36][25] = true;
+          this.cellsArr[36][26] = true;
+          this.cellsArr[36][27] = true;
+          this.cellsArr[37][28] = true;
+          this.cellsArr[38][22] = true;
+          this.cellsArr[38][23] = true;
+          this.cellsArr[38][25] = true;
+          this.cellsArr[38][26] = true;
+          this.cellsArr[38][27] = true;
+          this.cellsArr[39][23] = true;
+          this.cellsArr[39][25] = true;
+          this.cellsArr[40][23] = true;
+          this.cellsArr[40][25] = true;
+          this.cellsArr[41][24] = true;
+          break;
+      }
+      // update cells to update
+      for (var i = 0; i < this.numCells().x; i++) {
+        for (var j = 0; j < this.numCells().y; j++) {
+          var isAlive = this.cellsArr[i][j];
+          if (isAlive) {
+            cellsToUpdate.push(new CellSmall(i, j, isAlive));
+          }
+        }
       }
 
       // paint
       this.updateGameBoard(cellsToUpdate);
-    },
-    // TODO: remove me
-    makeCellKey: function(x, y) {
-      return x + "/" + y;
     },
     // runs the main game logic.
     step: function() {
@@ -162,9 +213,12 @@
       for (var i = 0; i < this.numCells().x; i++) {
         for (var j = 0; j < this.numCells().y; j++) {
           var isAlive = this.cellsArr[i][j];
-          var numNbrs = this.countAliveNeighbours2(i, j);
+          var numNbrs = this.countAliveNeighbours(i, j);
           var cellAliveNextStep = this.isCellAliveOnNextStep(isAlive, numNbrs);
-          cellsToUpdate.push(new CellSmall(i, j, cellAliveNextStep));
+
+          if (isAlive && !cellAliveNextStep || !isAlive && cellAliveNextStep) {
+            cellsToUpdate.push(new CellSmall(i, j, cellAliveNextStep));
+          }
         }
       }
 
@@ -172,27 +226,16 @@
     },
     isCellAliveOnNextStep: function(isAlive, numNbrs) {
       if (isAlive) {
-        switch (numNbrs) {
-          case 0:
-          case 1:
-            return false;
-            break;
-          case 2:
-          case 3:
-            // keep alive
-            return true;
-            break;
-          case 4:
-          default:
-            return false;
-        }
-      } else {
-        if (numNbrs == 3) {
+        if (numNbrs ==2 || numNbrs == 3) {
           return true;
         }
+        return false;
+      }
+      if (!isAlive && numNbrs == 3) {
+        return true;
       }
     },
-    countAliveNeighbours2: function(x, y) {
+    countAliveNeighbours: function(x, y) {
       // get values of adjacent cells
       var numNbrs = 0;
       var numCells = this.numCells();
@@ -231,77 +274,18 @@
         self.renderer.drawRect(x*self.cellSize, y*self.cellSize, self.cellSize, self.cellSize, isAlive);
         self.cellsArr[x][y] = isAlive; // update cells
       });
-
-      // for (var i = 0; i < this.numCells().y; i++) {
-      //   for (var j = 0; j < this.numCells().x; j++) {
-      //     var isAlive = this.cellsArr[i][j];
-      //     this.renderer.drawRect(i*this.cellSize, j*this.cellSize, this.cellSize, this.cellSize, isAlive);
-      //   }
-      // }
     }
   };
 
-var CellSmall = function(x, y, isAlive) {
-  this.x = x;
-  this.y = y;
-  this.isAlive = isAlive;
-};
-
-  var Cell = function(x, y, isAlive, numCells) {
+  var CellSmall = function(x, y, isAlive) {
     this.x = x;
     this.y = y;
-    this.numCells = numCells;
     this.isAlive = isAlive;
-    this.neighbours = new Set();
-  };
-
-  Cell.prototype = {
-    toString: function() {
-      return this.makeCellKey(this.x, this.y);
-    },
-    makeCellKey: function(x, y) {
-      return x + "/" + y;
-    },
-    parseCellKey: function() {
-      // TODO: can we use a map function for parseInt?
-      var keyArr = this.toString().split("/");
-      keyArr[0] = parseInt(keyArr[0]);
-      keyArr[1] = parseInt(keyArr[1]);
-      return keyArr;
-    },
-    numNeighbours: function() {
-      return this.neighbours.length-1;
-    },
-    initNeighbours: function() {
-      var x = this.x;
-      var y = this.y;
-      var numCells = this.numCells;
-      console.log("Init neighbours for x: " + x + " and y " + y);
-
-      var startPosX = (x-1 < 0) ? x : x-1;
-      var startPosY = (y-1 < 0) ? y : y-1;
-      var endPosX = (x+1 > numCells.x-1) ? x : x+1;
-      var endPosY = (y+1 > numCells.y-1) ? y : y+1;
-
-      // add neighbours as list of dead cells
-      for (var rowNum = startPosY; rowNum <= endPosY; rowNum++) {
-        for (var colNum = startPosX; colNum <= endPosX; colNum++) {
-          // don't add self to list of neighbours
-          if (colNum == x && rowNum == y) {
-            continue;
-          }
-          console.log("x: " + colNum + " y:" + rowNum);
-          // var nbr = new Cell(colNum, rowNum, false, numCells);
-          this.neighbours.add(this.makeCellKey(colNum, rowNum));
-        }
-      }
-    }
   };
 
   // exports objects to global scope
   exports.Game = Game;
   exports.Renderer = Renderer;
-  exports.Cell = Cell;
   exports.CellSmall = CellSmall;
 
 

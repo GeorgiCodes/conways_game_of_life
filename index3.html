@@ -36,6 +36,7 @@ Patterns
   <li><a href="#" class="button" id="random">Random</a></li>
   <li><a href="#" class="button" id="oscillator">Oscillator</a></li>
   <li><a href="#" class="button" id="glider">Glider</a></li>
+  <li><a href="#" class="button" id="gosperGun">Gosper Gun</a></li>
 </ul>
 </div>
 </div>
@@ -73,6 +74,7 @@ Patterns
     var oscillator = document.getElementById("oscillator");
     var glider = document.getElementById("glider");
     var random = document.getElementById("random");
+    var gosperGun = document.getElementById("gosperGun");
 
     stepButton.addEventListener('click', function() {
       game.step();
@@ -88,6 +90,9 @@ Patterns
     }, false);
     random.addEventListener('click', function() {
       game.seed("random");
+    }, false);
+    gosperGun.addEventListener('click', function() {
+      game.seed("gosperGun");
     }, false);
   };
 </script>
