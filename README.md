@@ -13,9 +13,14 @@ At each step in time, the following transitions occur:
 3. Any live cell with more than three live neighbours dies, as if by overcrowding.
 4. Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction.
 
-# Algorithm Implementation
-This version of Conway's Game of Life includes
+## Algorithm Implementation
+This version of Conway's Game of Life includes an algorithm optimized for speed. At each step, the game calculates the boundary coordinates of the alive cells. Only cells wihtin these boundaries are iterated over to determine the next transition. 
 
+A naiive algorithm would check each and every cell on step for a time complexity of O(M*N).
+
+This optimized approach only checks the boundaries of the alive cells for a time complexity of O(AliveCellsXWidth * AliveCellsYHeight).
+
+At each step, only the cells which have changed since the laste step are repainted onto the canvas.  
 
 # How to run
 This version of Conway's Game of Life requires the following flags to be set in `chrome:\\flags`:
