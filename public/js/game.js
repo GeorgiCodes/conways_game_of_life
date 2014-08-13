@@ -14,16 +14,12 @@
 
   Game.prototype = {
     start: function(seedType) {
-      console.log("Starting game...");
-
       var self = this;
       this.intervalId = setInterval(function() {
         self.step();
       }, 40);
-      console.log("Starting animation with id: " + this.intervalId);
     },
     stop: function() {
-      console.log("Stopping animation with id: " + this.intervalId);
       clearInterval(this.intervalId);
     },
     init: function() {
@@ -33,9 +29,6 @@
     },
     initCells: function() {
       var numCells = this.numCells();
-      console.log("Init all cells as dead.");   
-      console.log("GameBoard initialized to width: " + numCells.x + " and height: " + numCells.y);
-
       // init cells to be dead
       // O(numRows * numCols) time and space complexity
       for (var i = 0; i < numCells.x; i++) {
@@ -184,8 +177,8 @@
       }
     },
     updateGameBoard: function(cellsToUpdate, renderer) {
-      // TODO: replace with for i
-      cellsToUpdate.forEach(function(cell, index, array) {
+      for (var i = 0; i < cellsToUpdate.length; i++) {
+        var cell = cellsToUpdate[i];
         var x = cell.x;
         var y = cell.y;
         var isAlive = cell.isAlive;
@@ -194,7 +187,7 @@
           renderer.updateCell(x, y, this.cellSize, isAlive);
         }
         this.cellsArr[x][y] = isAlive; // update cells
-      }, this);
+      }
     }
   };
 

@@ -1,6 +1,7 @@
 const start = "Start";
 const stop = "Stop";
-
+const rainbow = "rainbow";
+const blue = "blue";
 
 ;(function(exports) {
 	"use strict";
@@ -11,6 +12,7 @@ const stop = "Stop";
   	var renderer = new Renderer("screen");
     var game = new Game(renderer);
     this.game = game;  
+    this.renderer = renderer;
   };
 
   App.prototype = {
@@ -27,6 +29,13 @@ const stop = "Stop";
       }
       if (action == stop) {
         this.game.stop();
+      }
+    },
+    setCellColour: function(style) {
+      if (style == rainbow) {
+        this.renderer.isRainbow = true;
+      } else {
+        this.renderer.isRainbow = false; 
       }
     }
   }
@@ -49,6 +58,8 @@ window.onload = function() {
   var gliderBtn = document.getElementById("glider");
   var randomBtn = document.getElementById("random");
   var gosperGunBtn = document.getElementById("gosperGun");
+  var rainbowBtn = document.getElementById("rainbow");  
+  var blueBtn = document.getElementById("blue");  
 
   stepButton.addEventListener('click', app.step.bind(app));
   startButton.addEventListener('click', function() {
@@ -68,5 +79,11 @@ window.onload = function() {
   }, false);
   gosperGunBtn.addEventListener('click', function() {
     app.seed("gosperGun");
+  }, false);
+  rainbowBtn.addEventListener('click', function() {
+    app.setCellColour(rainbow);
+  }, false);
+  blueBtn.addEventListener('click', function() {
+    app.setCellColour(blue);
   }, false);
 };

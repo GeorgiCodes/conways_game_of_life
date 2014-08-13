@@ -7,6 +7,7 @@
   // View logic to draw and update canvas
   var Renderer = function(canvasId) {
     this.canvasId = canvasId;
+    this.isRainbow = false;
     this.initGameBoard();
   };
 
@@ -31,9 +32,24 @@
       var ctx = this.ctx();
       ctx.beginPath();
       ctx.rect(x, y, w, h);
-      ctx.fillStyle = isAlive ? '#6495ed' : '#ffffff';
+      ctx.fillStyle = isAlive ? this.getAliveColour() : this.getDeadColour();
       ctx.stroke();
       ctx.fill();
+    },
+    getAliveColour: function() {
+      if (this.isRainbow) { 
+        return this.randomizeColour();
+      } 
+      return "#3366FF"; 
+    },
+    getDeadColour: function() {
+      if (this.isRainbow) {
+        return "#FFFFFF";
+      }
+      return "#99FFCC";
+    },
+    randomizeColour: function() {
+      return '#'+(Math.random()*0xFFFFFF<<0).toString(16);
     }
   };
 
