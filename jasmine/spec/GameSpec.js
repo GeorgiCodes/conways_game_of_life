@@ -41,7 +41,7 @@ describe("Game", function () {
     });
   });
 
-  describe("num cells", function () {
+  describe("numCells", function () {
     beforeEach(function() {
       mockRenderer = new MockRenderer();
       game = new Game(mockRenderer);
@@ -58,7 +58,7 @@ describe("Game", function () {
 
   });
 
-  describe("init cells", function () {
+  describe("initCells", function () {
     beforeEach(function() {
       mockRenderer = new MockRenderer();
       game = new Game(mockRenderer);
@@ -77,111 +77,192 @@ describe("Game", function () {
 
   });
 
+  describe("isCellAliveOnNextStep", function () {
+    beforeEach(function() {
+      mockRenderer = new MockRenderer();
+      game = new Game(mockRenderer);
+    }); 
 
-});
+    it("returns true when cell is alive and has 2 neighbours", function () {
+      var result = game.isCellAliveOnNextStep(true, 2);
 
-  //   describe("oscillator pattern", function () {
-  //     beforeEach(function() {
-  //       game = new Game(mockRenderer);
-  //     });
+      expect(result).toBe(true);
+    });
 
-  //     it("initializes pattern", function () {
-  //       game.seed("oscillator");
+    it("returns true when cell is alive and has 3 neighbours", function () {
+      var result = game.isCellAliveOnNextStep(true, 3);
 
-  //       expect(game.aliveCells.size).toEqual(3);
-  //       expect(game.aliveCells.has("1/0")).toBe(true);
-  //       expect(game.aliveCells.has("1/1")).toBe(true);
-  //       expect(game.aliveCells.has("1/2")).toBe(true);
-  //       expect(game.cells.get("1/0").isAlive).toBe(true);
-  //       expect(game.cells.get("1/1").isAlive).toBe(true);
-  //       expect(game.cells.get("1/2").isAlive).toBe(true);
-  //     });
+      expect(result).toBe(true);
+    });
 
-  //     it("counts neighbours of initial pattern cells", function () {
-  //       game.seed("oscillator");
+    it("returns false when cell is alive and has 1 neighbour", function () {
+      var result = game.isCellAliveOnNextStep(true, 1);
 
-  //       expect(game.countAliveNeighbours(game.cells.get("1/0"))).toEqual(1);
-  //       expect(game.countAliveNeighbours(game.cells.get("1/1"))).toEqual(2);
-  //       expect(game.countAliveNeighbours(game.cells.get("1/2"))).toEqual(1);
-  //       expect(game.countAliveNeighbours(game.cells.get("0/1"))).toEqual(3);
-  //       expect(game.countAliveNeighbours(game.cells.get("2/1"))).toEqual(3);
-  //     });
+      expect(result).toBe(false);
+    });
 
-  //     it("updates alive cells of second iteration", function () {
-  //       game.seed("oscillator");
-  //       game.step();
+    it("returns false when cell is alive and has 4 neighbour", function () {
+      var result = game.isCellAliveOnNextStep(true, 4);
 
-  //       // console.log(game.aliveCells.get("0/1"));
-  //       // console.log(game.aliveCells.get("1/1"));
-  //       // console.log(game.aliveCells.get("2/1"));
+      expect(result).toBe(false);
+    });
 
-  //       expect(game.aliveCells.size).toEqual(3);
-  //       // new values
-  //       expect(game.aliveCells.has("0/1")).toBe(true);
-  //       expect(game.aliveCells.has("1/1")).toBe(true);
-  //       expect(game.aliveCells.has("2/1")).toBe(true);
-  //       // previous values
-  //       expect(game.aliveCells.has("1/0")).toBe(false);
-  //       expect(game.aliveCells.has("1/2")).toBe(false);
-  //     });
+    it("returns true when cell is dead and has 3 neighbours", function () {
+      var result = game.isCellAliveOnNextStep(false, 3);
 
-  //     it("updates alive cells of third iteration", function () {
-  //       game.seed("oscillator");
-  //       game.step();
-  //       game.step();
+      expect(result).toBe(true);
+    });
 
-  //       expect(game.aliveCells.size).toEqual(3);
-  //       // new values
-  //       expect(game.aliveCells.has("1/0")).toBe(true);
-  //       expect(game.aliveCells.has("1/1")).toBe(true);
-  //       expect(game.aliveCells.has("1/2")).toBe(true);
-  //       // previous values
-  //       expect(game.aliveCells.has("0/1")).toBe(false);
-  //       expect(game.aliveCells.has("2/1")).toBe(false);
-  //     });
-  //   });
+    it("returns false when cell is dead and has 3 neighbours", function () {
+      var result = game.isCellAliveOnNextStep(false, 2);
 
-  // describe("glider pattern", function () {
+      expect(result).toBe(false);
+    });
+
+  });
+
+  describe("hasCellChangedFromPreviousStep", function () {
+    beforeEach(function() {
+      mockRenderer = new MockRenderer();
+      game = new Game(mockRenderer);
+    }); 
+
+    it("returns true if was alive but is now dead", function () {
+      var result = game.hasCellChangedFromPreviousStep(true, false);
+
+      expect(result).toBe(true);
+    });
+
+    it("returns true if was dead but is now alive", function () {
+      var result = game.hasCellChangedFromPreviousStep(false, true);
+
+      expect(result).toBe(true);
+    });
+
+    it("returns false if was dead and is still dead", function () {
+      var result = game.hasCellChangedFromPreviousStep(false, false);
+
+      expect(result).toBe(false);
+    });
+
+    it("returns false if was alive and is still alive", function () {
+      var result = game.hasCellChangedFromPreviousStep(true, true);
+
+      expect(result).toBe(false);
+    });
+
+  });
+
+  describe("countAliveNeighbours", function () {
+    beforeEach(function() {
+      mockRenderer = new MockRenderer();
+      game = new Game(mockRenderer);
+      game.initCells();
+      game.cellsArr[1][0] = true;
+      game.cellsArr[1][1] = true;
+      game.cellsArr[1][2] = true;
+    }); 
+
+    it("counts number of alive neighbours", function () {
+      expect(game.countAliveNeighbours(0, 1)).toBe(3);
+      expect(game.countAliveNeighbours(2, 1)).toBe(3);  
+      expect(game.countAliveNeighbours(1, 0)).toBe(1);
+      expect(game.countAliveNeighbours(1, 1)).toBe(2);
+      expect(game.countAliveNeighbours(1, 2)).toBe(1);
+    });
+
+  });
+
+  describe("setMinXCoord", function () {
+    beforeEach(function() {
+      mockRenderer = new MockRenderer();
+      game = new Game(mockRenderer);
+      game.initMaxCoords();
+    }); 
+
+    it("updates minMaxCoords minX when x is on left border to be 0", function () {
+      game.setMinXCoord(0);
+      expect(game.minMaxCoords.minX).toBe(0);
+    });
+
+    it("updates minMaxCoords minX to be 1 less than x when not on border", function () {
+      game.setMinXCoord(2);
+      expect(game.minMaxCoords.minX).toBe(1);
+    });
+
+  });
+
+  describe("setMaxXCoord", function () {
+    beforeEach(function() {
+      mockRenderer = new MockRenderer();
+      game = new Game(mockRenderer);
+      game.initMaxCoords();
+    }); 
+
+    it("updates minMaxCoords maxX when x is on right border to be maxCols", function () {
+      game.setMaxXCoord(29);
+      expect(game.minMaxCoords.maxX).toBe(29);
+    });
+
+    it("updates minMaxCoords maxX to be 1 more than x when not on border", function () {
+      game.setMaxXCoord(10);
+      expect(game.minMaxCoords.maxX).toBe(11);
+    });
+
+  });
+
+  describe("setMinYCoord", function () {
+    beforeEach(function() {
+      mockRenderer = new MockRenderer();
+      game = new Game(mockRenderer);
+      game.initMaxCoords();
+    }); 
+
+    it("updates minMaxCoords minY when y is on top border to be 0", function () {
+      game.setMinYCoord(0);
+      expect(game.minMaxCoords.minY).toBe(0);
+    });
+
+    it("updates minMaxCoords minY to be 1 less than x when not on border", function () {
+      game.setMinYCoord(10);
+      expect(game.minMaxCoords.minY).toBe(9);
+    });
+
+  });
+
+  describe("setMaxYCoord", function () {
+    beforeEach(function() {
+      mockRenderer = new MockRenderer();
+      game = new Game(mockRenderer);
+      game.initMaxCoords();
+    }); 
+
+    it("updates minMaxCoords maxY when y is on bottom border to be 0", function () {
+      game.setMaxYCoord(14);
+      expect(game.minMaxCoords.maxY).toBe(14);
+    });
+
+    it("updates minMaxCoords maxY to be 1 more than y when not on border", function () {
+      game.setMaxYCoord(10);
+      expect(game.minMaxCoords.maxY).toBe(11);
+    });
+
+  });
+
+  // describe("step", function () {
   //   beforeEach(function() {
-  //     var mockRenderer = new MockRenderer();
+  //     mockRenderer = new MockRenderer();
   //     game = new Game(mockRenderer);
-  //   });
+  //     game.init();
+  //     game.cellsArr[1][0] = true;
+  //     game.cellsArr[1][1] = true;
+  //     game.cellsArr[1][2] = true;
+  //   }); 
 
-  //   it("initializes pattern", function () {
-  //     game.seed("glider");
-
-  //     expect(game.aliveCells.size).toEqual(5);
-  //     expect(game.aliveCells.has("1/3")).toBe(true);
-  //     expect(game.aliveCells.has("1/4")).toBe(true);
-  //     expect(game.aliveCells.has("2/4")).toBe(true);
-  //     expect(game.aliveCells.has("2/5")).toBe(true);
-  //     expect(game.aliveCells.has("0/5")).toBe(true);
-  //   });
-
-  //   it("updates alive cells of second iteration", function () {
-  //     game.seed("oscillator");
-  //     game.step();
-
-  //     // console.log(game.aliveCells.get("0/1"));
-  //     // console.log(game.aliveCells.get("1/1"));
-  //     // console.log(game.aliveCells.get("2/1"));
-
-  //     expect(game.aliveCells.size).toEqual(3);
-  //     // new values
-  //     expect(game.aliveCells.has("1/3")).toBe(true);
-  //     expect(game.aliveCells.has("1/4")).toBe(true);
-  //     expect(game.aliveCells.has("2/4")).toBe(true);
-  //     expect(game.aliveCells.has("2/5")).toBe(true);
-  //     expect(game.aliveCells.has("0/5")).toBe(true);
-
-  //     // previous values
-  //     expect(game.aliveCells.has("1/3")).toBe(true);
-  //     expect(game.aliveCells.has("1/4")).toBe(true);
-  //     expect(game.aliveCells.has("2/4")).toBe(true);
-  //     expect(game.aliveCells.has("2/5")).toBe(true);
-  //     expect(game.aliveCells.has("0/5")).toBe(true);
+  //   it("runs optimized algorithm", function () {
+  //     game.setMaxYCoord(14);
+  //     expect(game.minMaxCoords.maxY).toBe(14);
   //   });
 
   // });
-
-// });
+});

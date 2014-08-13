@@ -121,9 +121,9 @@
     updateMinMaxCoords: function(minX, maxX, minY, maxY) {
       this.initMaxCoords();
       this.setMinXCoord(minX);
-      this.setMaxXCoord(this.numCells(), maxX);
+      this.setMaxXCoord(maxX);
       this.setMinYCoord(minY);
-      this.setMaxYCoord(this.numCells(), maxY);
+      this.setMaxYCoord(maxY);
     },
     isCellAliveOnNextStep: function(isAlive, numNbrs) {
       if (isAlive) {
@@ -165,10 +165,10 @@
         this.minMaxCoords.minX = (minX - 1) < 0 ? 0 : (minX - 1);
       }
     },
-    setMaxXCoord: function(numCells, maxX) {
+    setMaxXCoord: function(maxX) {
       // update highest x
       if (maxX > this.minMaxCoords.maxX) {
-        this.minMaxCoords.maxX = (maxX + 1) > numCells.maxX ? numCells.maxX : (maxX + 1);
+        this.minMaxCoords.maxX = (maxX + 1) > this.numCells().maxX ? this.numCells().maxX : (maxX + 1);
       }
     },
     setMinYCoord: function(minY) {
@@ -177,10 +177,10 @@
         this.minMaxCoords.minY = (minY -1) < 0 ? 0 : (minY - 1);
       }
     },
-    setMaxYCoord: function(numCells, maxY) {
+    setMaxYCoord: function(maxY) {
       // update highest y
       if (maxY > this.minMaxCoords.maxY) {
-        this.minMaxCoords.maxY = (maxY + 1) > numCells.maxY ? numCells.maxY : (maxY + 1);
+        this.minMaxCoords.maxY = (maxY + 1) > this.numCells().maxY ? this.numCells().maxY : (maxY + 1);
       }
     },
     updateGameBoard: function(cellsToUpdate, renderer) {

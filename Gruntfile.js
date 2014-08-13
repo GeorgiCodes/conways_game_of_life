@@ -16,7 +16,6 @@ module.exports = function(grunt) {
   });
 
   // Register tasks.
-  // grunt.loadNpmTasks('grunt-contrib-jasmine');
   grunt.loadNpmTasks('grunt-contrib-jshint');
 
   // Default task.

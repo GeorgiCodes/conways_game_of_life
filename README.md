@@ -30,3 +30,6 @@ Open the `index.html` file in your browser and select a preset pattern to get st
 
 # How to run tests
 The tests were written with Jasmine, they can be run in the browser by opening `jasmine\SpecRunner.html`.
+
+# Grunt
+To run jshint simply run `grunt` from the root directory in the terminal. 
