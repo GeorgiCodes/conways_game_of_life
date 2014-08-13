@@ -1,16 +1,13 @@
 ;(function(exports) {
   "use strict";
 
-  // THink about creating a UI object
-  // where game + renderer logic are spereated
-  // 50000 button idea.
-
   // UI Renderer object
   // ----------------
 
-  // Abstracts visual logic from game logic
+  // View logic to draw and update canvas
   var Renderer = function(canvasId) {
     this.canvasId = canvasId;
+    this.initGameBoard();
   };
 
   Renderer.prototype = {
@@ -23,25 +20,18 @@
     gameSize: function() {
       return { x: this.canvas().width, y: this.canvas().height };
     },
-    clearRect: function() {
+    initGameBoard: function() {
       this.ctx().clearRect(0, 0, this.gameSize().x, this.gameSize().y);
+      this.ctx().strokeStyle = "white";
     },
-    setStrokeColour: function(colour) {
-      this.ctx().strokeStyle = colour;
+    updateCell: function(x, y, cellSize, isAlive) {
+      this.drawRect(x*cellSize, y*cellSize, cellSize, cellSize, isAlive);  
     },
     drawRect: function(x, y, w, h, isAlive) {
       var ctx = this.ctx();
       ctx.beginPath();
       ctx.rect(x, y, w, h);
       ctx.fillStyle = isAlive ? '#6495ed' : '#ffffff';
-      ctx.stroke();
-      ctx.fill();
-    },
-    drawBoundary: function(x, y, w, h) {
-      var ctx = this.ctx();
-      ctx.beginPath();
-      ctx.rect(x, y, w, h);
-      ctx.fillStyle = "pink";
       ctx.stroke();
       ctx.fill();
     }

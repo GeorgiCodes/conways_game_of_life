@@ -3,9 +3,8 @@ module.exports = function(grunt) {
   // Project Configuration
   grunt.initConfig({
     jshint: {
-      files: ['Gruntfile.js', 'public/**/*.js'],
+      files: ['Gruntfile.js', 'public/app.js', 'public/dataWrangler.js', 'public/game.js', 'public/renderer.js'],
       options: {
-        // options here to override JSHint defaults
         globals: {
           jQuery: false,
           console: true,

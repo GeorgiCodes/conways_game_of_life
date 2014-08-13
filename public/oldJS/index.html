@@ -36,7 +36,6 @@ Patterns
   <li><a href="#" class="button" id="random">Random</a></li>
   <li><a href="#" class="button" id="oscillator">Oscillator</a></li>
   <li><a href="#" class="button" id="glider">Glider</a></li>
-  <li><a href="#" class="button" id="gosperGun">Gosper Gun</a></li>
 </ul>
 </div>
 </div>
@@ -59,16 +58,12 @@ Patterns
       var doc = document.documentElement;
       doc.setAttribute('data-useragent', navigator.userAgent);
 </script>
-<script src="public/js/game3.js"></script>
-<script src="public/js/dataWranger.js"></script>
-<script src="public/js/renderer.js"></script>
-
+<script src="public/js/game.js"></script>
 <script>
   // Start game
   // ----------
 
   // When the DOM is ready, create (and start) the game.
-  // TODO: move this js to own js file eg button evets/handlers
   window.onload = function() {
     var renderer = new Renderer("screen");
     var game = new Game(renderer);
@@ -78,7 +73,6 @@ Patterns
     var oscillator = document.getElementById("oscillator");
     var glider = document.getElementById("glider");
     var random = document.getElementById("random");
-    var gosperGun = document.getElementById("gosperGun");
 
     stepButton.addEventListener('click', function() {
       game.step();
@@ -94,9 +88,6 @@ Patterns
     }, false);
     random.addEventListener('click', function() {
       game.seed("random");
-    }, false);
-    gosperGun.addEventListener('click', function() {
-      game.seed("gosperGun");
     }, false);
   };
 </script>
