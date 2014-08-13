@@ -1,10 +1,10 @@
-=====================
-Conway's Game of Life
+Optimized Conway's Game of Life
+===============================
 
 # Overview
-Conway's Life is a classic computer science problem that's been around since 1970. It is a compelling demonstration of emergent behavior: from simple rules, complex (and, on the surface, unpredictable) patterns emerge.
+[Conway's Game of Life](http://en.wikipedia.org/wiki/Conway's_Game_of_Life) is a classic computer science problem that's been around since 1970. It is a compelling demonstration of emergent behavior: from simple rules, complex (and, on the surface, unpredictable) patterns emerge.
 
-The game is played on an MxN board, where each position in the board (called a 'cell' for purposes of the game) can be 'on' or 'off'.
+The game is played on an MxN board, where each position in the board (called a 'cell' for purposes of the game) can be 'alive' or 'dead'.
 
 At each step in time, the following transitions occur:
 
@@ -24,7 +24,9 @@ At each step, only the cells which have changed since the laste step are repaint
 
 # How to run
 This version of Conway's Game of Life requires the following flags to be set in `chrome:\\flags`:
-* Enable Experimental JavaScript
+* `Enable Experimental JavaScript`
+
+Open the `index.html` file in your browser and select a preset pattern to get started.
 
 # How to run tests
 The tests were written with Jasmine, they can be run in the browser by opening `jasmine\SpecRunner.html`.

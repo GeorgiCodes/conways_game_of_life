@@ -8,10 +8,8 @@
   var Game = function(renderer) {
     this.renderer = renderer;
     this.cellSize = 10;
-    this.cellsArr = new Array();
+    this.cellsArr = [];
     this.minMaxCoords = {};
-
-    this.init();
   };
 
   Game.prototype = {
@@ -89,7 +87,7 @@
       // This algorithm does not iterate over the entire game board.
       // Instead, it keeps track of the max and min x and y coords that contain the live cells.
       // Then we only iterate over these bounds each step.
-      // 
+      
       var cellsToUpdate = [];
       var minX = Number.MAX_VALUE;
       var maxX = Number.MIN_VALUE;
