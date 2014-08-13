@@ -97,7 +97,7 @@
             cellsToUpdate.push(new Cell(i, j, cellAliveNextStep));
           }
 
-          if (isAlive) {
+          if (cellAliveNextStep) {
             if (i < minX) minX = i;
             if (i > maxX) maxX = i;
             if (j < minY) minY = j;
