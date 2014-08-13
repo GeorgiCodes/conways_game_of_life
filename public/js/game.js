@@ -7,7 +7,7 @@
   // Creates the game object with the game state and logic.
   var Game = function(renderer) {
     this.renderer = renderer;
-    this.cellSize = 10;
+    this.cellSize = 5;
     this.cellsArr = [];
     this.minMaxCoords = {};
   };
@@ -17,7 +17,7 @@
       var self = this;
       this.intervalId = setInterval(function() {
         self.step();
-      }, 40);
+      }, 5);
     },
     stop: function() {
       clearInterval(this.intervalId);
@@ -78,8 +78,10 @@
     optimizedAlgorithm: function() {
       // This is an optimized algorithm for Conway's Game of Life.
       // This algorithm does not iterate over the entire game board.
-      // Instead, it keeps track of the max and min x and y coords that contain the live cells.
-      // Then we only iterate over these bounds each step.
+      // Instead, it keeps track of the max and min x and y coords that contain the live cells
+      // A 1 cell padding is added to these boundary coordinates so as to be able to identify dead cells which
+      // maybe become alive due to rule 4.
+      // Then we only iterate over these bounds each step as opposed to the whole grid.
       
       var cellsToUpdate = [];
       var minX = Number.MAX_VALUE;
@@ -87,6 +89,7 @@
       var minY = Number.MAX_VALUE;
       var maxY = Number.MIN_VALUE;
 
+      console.log("num cells to iterate over x: " + (this.minMaxCoords.maxX - this.minMaxCoords.minX));
       for (var i = this.minMaxCoords.minX; i <= this.minMaxCoords.maxX; i++) {
         for (var j = this.minMaxCoords.minY; j <= this.minMaxCoords.maxY; j++) {
           var isAlive = this.cellsArr[i][j];
@@ -97,6 +100,7 @@
             cellsToUpdate.push(new Cell(i, j, cellAliveNextStep));
           }
 
+          // if cell is alive on next transition then check to see if our boundary coordinates need to be updated
           if (cellAliveNextStep) {
             if (i < minX) minX = i;
             if (i > maxX) maxX = i;
