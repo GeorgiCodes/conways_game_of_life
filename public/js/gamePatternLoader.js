@@ -29,6 +29,9 @@
         case "oscillator":
           this.initOscillator();
           break;
+        case "acorn":
+          this.initAcorn();
+          break;
         case "gosperGun":
           this.initGosperGun();
           break;
@@ -83,6 +86,15 @@
       this.cellsArr[1][0] = true;
       this.cellsArr[1][1] = true;
       this.cellsArr[1][2] = true;
+    },
+    initAcorn: function() {
+      this.cellsArr[100][73] = true;
+      this.cellsArr[101][71] = true;
+      this.cellsArr[101][73] = true;
+      this.cellsArr[103][72] = true;
+      this.cellsArr[104][73] = true;
+      this.cellsArr[105][73] = true;
+      this.cellsArr[106][73] = true;
     },
     initGosperGun: function() {
       this.cellsArr[1][5] = true;

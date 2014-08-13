@@ -249,6 +249,27 @@ describe("Game", function () {
 
   });
 
+  describe("compare algorithms", function () {
+    beforeEach(function() {
+      mockRenderer = new MockRenderer();
+      // game = new Game(mockRenderer);
+      // game.initMaxCoords();
+    }); 
+
+    it("compare", function () {
+      mockRenderer = new MockRenderer();
+      gameNaiive = new Game(mockRenderer);
+      var gamePatternLoader = new GamePatternLoader(gameNaiive);
+      gamePatternLoader.loadPatternIntoGame("acorn");
+
+      gameFast = new Game(mockRenderer);
+      var gamePatternLoader = new GamePatternLoader(gameFast);
+      gamePatternLoader.loadPatternIntoGame("acorn");
+    });
+
+
+  });
+
   // describe("step", function () {
   //   beforeEach(function() {
   //     mockRenderer = new MockRenderer();

@@ -5,11 +5,13 @@
   // ----------------
 
   // Creates the game object with the game state and logic.
-  var Game = function(renderer) {
+  var Game = function(renderer, runOptimized) {
+    this.runOptimized = runOptimized;
     this.renderer = renderer;
-    this.cellSize = 10;
+    this.cellSize = 5;
     this.cellsArr = [];
     this.minMaxCoords = {};
+    this.stepNum = 0;
   };
 
   Game.prototype = {
@@ -29,6 +31,7 @@
     },
     initCells: function() {
       var numCells = this.numCells();
+      console.log("Game initialized with x: " + numCells.maxX + " and y: " + numCells.maxY);
       // init cells to be dead
       // O(numRows * numCols) time and space complexity
       for (var i = 0; i < numCells.x; i++) {
@@ -51,8 +54,11 @@
     },
     step: function() {
       // runs the main game logic and updates canvas
-      // var cellsToUpdate = this.naiiveAlgorithm(); // uncomment this line to see game run with naiive algorithm
-      var cellsToUpdate = this.optimizedAlgorithm();
+      if (this.runOptimized) {
+        var cellsToUpdate = this.optimizedAlgorithm();
+      } else {
+        var cellsToUpdate = this.naiiveAlgorithm(); // uncomment this line to see game run with naiive algorithm
+      }
       this.updateGameBoard(cellsToUpdate, this.renderer);
     },
     naiiveAlgorithm: function() {
@@ -62,17 +68,23 @@
 
       var cellsToUpdate = [];
 
+      console.log("========= STEP " + this.stepNum + " =======");
       for (var i = 0; i < this.numCells().x; i++) {
         for (var j = 0; j < this.numCells().y; j++) {
           var isAlive = this.cellsArr[i][j];
           var numNbrs = this.countAliveNeighbours(i, j);
           var cellAliveNextStep = this.isCellAliveOnNextStep(isAlive, numNbrs);
-
+if (this.stepNum == 53 && i == 85 && j == 72) {
+            console.log("problem area NAIIVE");
+            // console.log(this.minMaxCoords);
+          }
           if (this.hasCellChangedFromPreviousStep(isAlive, cellAliveNextStep)) {
+            console.log("cell updated x: " + i + " y: " + j + " isAlive next? " + cellAliveNextStep);
             cellsToUpdate.push(new Cell(i, j, cellAliveNextStep));
           }
         }
       }
+      this.stepNum += 1;
       return cellsToUpdate;
     },
     optimizedAlgorithm: function() {
@@ -87,17 +99,23 @@
       var minY = Number.MAX_VALUE;
       var maxY = Number.MIN_VALUE;
 
+      console.log("========= STEP " + this.stepNum + " =======");
       for (var i = this.minMaxCoords.minX; i <= this.minMaxCoords.maxX; i++) {
         for (var j = this.minMaxCoords.minY; j <= this.minMaxCoords.maxY; j++) {
           var isAlive = this.cellsArr[i][j];
           var numNbrs = this.countAliveNeighbours(i, j);
           var cellAliveNextStep = this.isCellAliveOnNextStep(isAlive, numNbrs);
-
+          if (this.stepNum == 52 && i == 85 && j == 71) {
+            console.log("problem area");
+            console.log(this.minMaxCoords);
+          }
           if (this.hasCellChangedFromPreviousStep(isAlive, cellAliveNextStep)) {
+            console.log("cell updated x: " + i + " y: " + j + " isAlive next? " + cellAliveNextStep);
             cellsToUpdate.push(new Cell(i, j, cellAliveNextStep));
           }
 
-          if (isAlive) {
+          // if the cell is alive the next transition then check if we need to update out boundary coordinates
+          if (cellAliveNextStep) {
             if (i < minX) minX = i;
             if (i > maxX) maxX = i;
             if (j < minY) minY = j;
@@ -105,7 +123,7 @@
           }
         }
       }
-
+      this.stepNum += 1;
       // update our min and max coordinate rectangle with new alive min/max values
       this.updateMinMaxCoords(minX, maxX, minY, maxY);
 
