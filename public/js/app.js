@@ -1,3 +1,7 @@
+const start = "Start";
+const stop = "Stop";
+
+
 ;(function(exports) {
 	"use strict";
   // Main application object
@@ -13,6 +17,17 @@
     seed: function(patternType) {
       var patternLoader = new GamePatternLoader(this.game);
       patternLoader.loadPatternIntoGame(patternType);
+    },
+    step: function() {
+      this.game.step();
+    },
+    performAction: function(action) {
+      if (action == start) {
+        this.game.start();
+      }
+      if (action == stop) {
+        this.game.stop();
+      }
     }
   }
 
@@ -30,28 +45,28 @@ window.onload = function() {
 
   var stepButton = document.getElementById("stepSim");
   var startButton = document.getElementById("startSim");
-  var oscillator = document.getElementById("oscillator");
-  var glider = document.getElementById("glider");
-  var random = document.getElementById("random");
-  var gosperGun = document.getElementById("gosperGun");
+  var oscillatorBtn = document.getElementById("oscillator");
+  var gliderBtn = document.getElementById("glider");
+  var randomBtn = document.getElementById("random");
+  var gosperGunBtn = document.getElementById("gosperGun");
 
-  // TODO: use bind
-  stepButton.addEventListener('click', function() {
-    app.game.step();
-  }, false);
+  stepButton.addEventListener('click', app.step.bind(app));
   startButton.addEventListener('click', function() {
-    app.game.start();
+    var currentAction = startButton.innerHTML;
+    app.performAction(currentAction);
+    startButton.innerHTML = (currentAction == stop) ? start : stop ;
   }, false);
-  oscillator.addEventListener('click', function() {
+
+  oscillatorBtn.addEventListener('click', function() {
     app.seed("oscillator");
   }, false);
-  glider.addEventListener('click', function() {
+  gliderBtn.addEventListener('click', function() {
     app.seed("glider");
   }, false);
-  random.addEventListener('click', function() {
+  randomBtn.addEventListener('click', function() {
     app.seed("random");
   }, false);
-  gosperGun.addEventListener('click', function() {
+  gosperGunBtn.addEventListener('click', function() {
     app.seed("gosperGun");
   }, false);
 };
