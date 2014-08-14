@@ -17,7 +17,7 @@
       var self = this;
       this.intervalId = setInterval(function() {
         self.step();
-      }, 5);
+      }, 10);
     },
     stop: function() {
       clearInterval(this.intervalId);
@@ -82,14 +82,16 @@
       // A 1 cell padding is added to these boundary coordinates so as to be able to identify dead cells which
       // maybe become alive due to rule 4.
       // Then we only iterate over these bounds each step as opposed to the whole grid.
-      
+      // This algorithms has a time complexity of O(AliveCellsXWidth * AliveCellsYHeight).
+      // This algorithm won't provide much performance optimizations when there are alive cells 
+      // near the edges of the game board as it will degrade back to O(numRows * numCols) time complexity.
+
       var cellsToUpdate = [];
       var minX = Number.MAX_VALUE;
       var maxX = Number.MIN_VALUE;
       var minY = Number.MAX_VALUE;
       var maxY = Number.MIN_VALUE;
 
-      console.log("num cells to iterate over x: " + (this.minMaxCoords.maxX - this.minMaxCoords.minX));
       for (var i = this.minMaxCoords.minX; i <= this.minMaxCoords.maxX; i++) {
         for (var j = this.minMaxCoords.minY; j <= this.minMaxCoords.maxY; j++) {
           var isAlive = this.cellsArr[i][j];
@@ -112,7 +114,9 @@
 
       // update our min and max coordinate rectangle with new alive min/max values
       this.updateMinMaxCoords(minX, maxX, minY, maxY);
-
+      console.log(cellsToUpdate);
+      console.log(this.minMaxCoords);
+      
       return cellsToUpdate;
     },
     updateMinMaxCoords: function(minX, maxX, minY, maxY) {

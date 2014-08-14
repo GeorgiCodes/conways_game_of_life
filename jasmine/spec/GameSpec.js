@@ -50,10 +50,10 @@ describe("Game", function () {
     it("calculates min and max x and y based on canvas size", function () {
       var numCells = game.numCells();
 
-      expect(numCells.x).toBe(30);
-      expect(numCells.y).toBe(15);
-      expect(numCells.maxX).toBe(29);
-      expect(numCells.maxY).toBe(14);
+      expect(numCells.x).toBe(60);
+      expect(numCells.y).toBe(30);
+      expect(numCells.maxX).toBe(59);
+      expect(numCells.maxY).toBe(29);
     });
 
   });
@@ -67,12 +67,12 @@ describe("Game", function () {
     it("initializes all cells as dead", function () {
       game.initCells();
 
-      expect(game.cellsArr.length).toBe(30);
+      expect(game.cellsArr.length).toBe(60);
       // check bounds
       expect(game.cellsArr[0][0]).toBe(false);
-      expect(game.cellsArr[29][0]).toBe(false);
+      expect(game.cellsArr[59][0]).toBe(false);
       expect(game.cellsArr[0][0]).toBe(false);
-      expect(game.cellsArr[0][14]).toBe(false);
+      expect(game.cellsArr[0][29]).toBe(false);
     });
 
   });
@@ -200,8 +200,8 @@ describe("Game", function () {
     }); 
 
     it("updates minMaxCoords maxX when x is on right border to be maxCols", function () {
-      game.setMaxXCoord(29);
-      expect(game.minMaxCoords.maxX).toBe(29);
+      game.setMaxXCoord(59);
+      expect(game.minMaxCoords.maxX).toBe(59);
     });
 
     it("updates minMaxCoords maxX to be 1 more than x when not on border", function () {
@@ -238,8 +238,8 @@ describe("Game", function () {
     }); 
 
     it("updates minMaxCoords maxY when y is on bottom border to be 0", function () {
-      game.setMaxYCoord(14);
-      expect(game.minMaxCoords.maxY).toBe(14);
+      game.setMaxYCoord(29);
+      expect(game.minMaxCoords.maxY).toBe(29);
     });
 
     it("updates minMaxCoords maxY to be 1 more than y when not on border", function () {
@@ -249,20 +249,46 @@ describe("Game", function () {
 
   });
 
-  // describe("step", function () {
-  //   beforeEach(function() {
-  //     mockRenderer = new MockRenderer();
-  //     game = new Game(mockRenderer);
-  //     game.init();
-  //     game.cellsArr[1][0] = true;
-  //     game.cellsArr[1][1] = true;
-  //     game.cellsArr[1][2] = true;
-  //   }); 
+  describe("optimizedAlgorithm", function () {
+    beforeEach(function() {
+      mockRenderer = new MockRenderer();
+      game = new Game(mockRenderer);
+      game.init();
+      // oscillator
+      game.cellsArr[1][0] = true;
+      game.cellsArr[1][1] = true;
+      game.cellsArr[1][2] = true;
+      game.minMaxCoords = {minX: 0, minY: 0, maxX: 2, maxY: 3};
+    }); 
 
-  //   it("runs optimized algorithm", function () {
-  //     game.setMaxYCoord(14);
-  //     expect(game.minMaxCoords.maxY).toBe(14);
-  //   });
+    it("updates cellsToUpdate array with only the cells that have changed this transition", function () {
+      var cellsToUpdate = game.optimizedAlgorithm();
 
-  // });
+      expect(cellsToUpdate.length).toBe(4);
+      expect(cellsToUpdate[0].x).toBe(0);
+      expect(cellsToUpdate[0].y).toBe(1); 
+      expect(cellsToUpdate[0].isAlive).toBe(true); 
+      expect(cellsToUpdate[1].x).toBe(1);
+      expect(cellsToUpdate[1].y).toBe(0); 
+      expect(cellsToUpdate[1].isAlive).toBe(false); 
+      expect(cellsToUpdate[2].x).toBe(1);
+      expect(cellsToUpdate[2].y).toBe(2); 
+      expect(cellsToUpdate[2].isAlive).toBe(false); 
+      expect(cellsToUpdate[3].x).toBe(2);
+      expect(cellsToUpdate[3].y).toBe(1); 
+      expect(cellsToUpdate[3].isAlive).toBe(true); 
+      expect(cellsToUpdate[3].isAlive).toBe(true); 
+    });
+
+
+    it("updates minMaxCoords boundaries based on newly alive cells", function () {
+      var cellsToUpdate = game.optimizedAlgorithm();
+
+      expect(game.minMaxCoords.minX).toBe(0);
+      expect(game.minMaxCoords.minY).toBe(0);
+      expect(game.minMaxCoords.maxX).toBe(3);
+      expect(game.minMaxCoords.maxY).toBe(2);
+    });
+
+  });
 });

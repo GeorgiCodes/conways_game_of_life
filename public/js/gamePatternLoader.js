@@ -63,7 +63,7 @@
           }
         }
       }
-
+      
       this.game.updateMinMaxCoords(minX, maxX, minY, maxY);
       return cellsToUpdate; 
     },

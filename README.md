@@ -2,7 +2,7 @@ Optimized Conway's Game of Life
 ===============================
 
 # Overview
-[Conway's Game of Life](http://en.wikipedia.org/wiki/Conway's_Game_of_Life) is a classic computer science problem that's been around since 1970. It is a compelling demonstration of emergent behavior: from simple rules, complex (and, on the surface, unpredictable) patterns emerge.
+[Conway's Game of Life](http://en.wikipedia.org/wiki/Conway's_Game_of_Life) is a cellular automation zero player game.
 
 The game is played on an MxN board, where each position in the board (called a 'cell' for purposes of the game) can be 'alive' or 'dead'.
 
@@ -18,7 +18,23 @@ This version of Conway's Game of Life includes an algorithm optimized for speed.
 
 A naiive algorithm would check each and every cell on step for a time complexity of O(M*N).
 
-This optimized approach only checks the boundaries of the alive cells for a time complexity of O(AliveCellsXWidth * AliveCellsYHeight).
+This optimized approach only checks the boundaries of the alive cells.
+
+For example on a board like this where x = alive and 0 = dead:
+0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0
+0 0 x x x 0 0 0
+0 0 0 0 0 0 0 0 
+0 0 0 0 0 0 0 0 
+
+this algorithm would only check the following boundaries on each transition marked by *
+0 0 0 0 0 0 0 0
+0 * * * * * 0 0
+0 * x x x * 0 0
+0 * * * * * 0 0 
+0 0 0 0 0 0 0 0 
+
+A one cell boundary is added to ensure that rule 4 (any dead cell with 3 alive neighbours becomes alive) will be properly calculated.
 
 At each step, only the cells which have changed since the laste step are repainted onto the canvas.  
 
