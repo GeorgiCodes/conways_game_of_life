@@ -56,6 +56,7 @@ window.onload = function() {
   var startButton = document.getElementById("startSim");
   var oscillatorBtn = document.getElementById("oscillator");
   var gliderBtn = document.getElementById("glider");
+  var acornBtn = document.getElementById("acorn");
   var randomBtn = document.getElementById("random");
   var gosperGunBtn = document.getElementById("gosperGun");
   var rainbowBtn = document.getElementById("rainbow");  
@@ -79,6 +80,9 @@ window.onload = function() {
   }, false);
   gosperGunBtn.addEventListener('click', function() {
     app.seed("gosperGun");
+  }, false);
+  acornBtn.addEventListener('click', function() {
+    app.seed("acorn");
   }, false);
   rainbowBtn.addEventListener('click', function() {
     app.setCellColour(rainbow);
