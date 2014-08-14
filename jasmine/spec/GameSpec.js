@@ -35,7 +35,7 @@ describe("Game", function () {
     it("constructs a game object", function () {
 
       expect(game.renderer).toEqual(mockRenderer);
-      expect(game.cellSize).toBe(10);
+      expect(game.cellSize).toBe(5);
       expect(game.cellsArr.length).toBe(0);
       expect(game.minMaxCoords).toBeDefined();
     });
