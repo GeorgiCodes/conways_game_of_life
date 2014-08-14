@@ -16,19 +16,19 @@ At each step in time, the following transitions occur:
 ## Algorithm Implementation
 This version of Conway's Game of Life includes an algorithm optimized for speed. At each step, the game calculates the boundary coordinates of the alive cells. Only cells within these boundaries are iterated over to determine the next transition. This is opposed to a naiive algorithm which would check each and every cell on step for a time complexity of O(M*N).
 
-For example on a board like this where x = alive and 0 = dead:
-0 0 0 0 0 0 0 0
-0 0 0 0 0 0 0 0
-0 0 x x x 0 0 0
-0 0 0 0 0 0 0 0 
-0 0 0 0 0 0 0 0 
+For example on a board like this where x = alive and 0 = dead: <br/>
+0 0 0 0 0 0 0 0 <br/>
+0 0 0 0 0 0 0 0 <br/>
+0 0 x x x 0 0 0 <br/>
+0 0 0 0 0 0 0 0 <br/>
+0 0 0 0 0 0 0 0 <br/>
 
-this algorithm would only check the following boundaries on each transition as marked by *
-0 0 0 0 0 0 0 0
-0 * * * * * 0 0
-0 * x x x * 0 0
-0 * * * * * 0 0 
-0 0 0 0 0 0 0 0 
+this algorithm would only check the following boundaries on each transition as marked by + <br/>
+0 0 0 0 0 0 0 0 <br/>
+0 + + + + + 0 0 <br/>
+0 + x x x + 0 0 <br/>
+0 + + + + + 0 0 <br/>
+0 0 0 0 0 0 0 0 <br/>
 
 A one cell boundary is added to ensure that rule 4 (any dead cell with 3 alive neighbours becomes alive) will be properly calculated.
 
