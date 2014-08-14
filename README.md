@@ -49,7 +49,7 @@ At each step, only the cells which have changed since the last step are repainte
 ### Considerations about this approach
 This algorithm works well for the preset patterns: Oscillator, Gosper Gun, Acorn and Glider because they occupy space that is less than the full width and height of the game board. However if Random is selected, this optimized algorithm will essentially degrade back to O(M*N) time complexity as the live cells take up the full width and height of the game board.
 
-Another drawback to this approach is for some patterns, the algorithm still does unnecessary checking of dead cells.
+Another drawback to this approach is for some patterns, the algorithm still does unnecessary checking of dead cells (Gosper Gun).
 
 ### Further thoughts on optimization
 The above approach is just one way Conway's can be optimized, some other ideas which I haven't fully explored include:
