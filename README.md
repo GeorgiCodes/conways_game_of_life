@@ -34,11 +34,12 @@ A one cell boundary is added to ensure that rule 4 (any dead cell with 3 alive n
 
 At each step, only the cells which have changed since the last step are repainted onto the canvas.  
 
-*NOTE:* This algorithm works well for the preset patterns: Oscillator, Gosper Gun, Acorn and Glider because they occupy space that is less than the full width and height of the game board. However if Random is selected, this optimized algorithm will essentially degrade back to O(M*N) time complexity as the live cells take up the full width and height of the game board.
+## Considerations about this approach
+This algorithm works well for the preset patterns: Oscillator, Gosper Gun, Acorn and Glider because they occupy space that is less than the full width and height of the game board. However if Random is selected, this optimized algorithm will essentially degrade back to O(M*N) time complexity as the live cells take up the full width and height of the game board.
 
 Another drawback to this approach for some patterns, the algorithm still does unnecessary checking of dead cells.
 
-### Further thoughts on optimization
+## Further thoughts on optimization
 The above approach is just one way Conway's can be optimized, some other ideas which I haven't fully explored include:
 ##### Calculating each live cell's neighbours on each transition
 This approach might work well for sparse grids and would certainly reduce unnecessary checking of dead cells with the approach outlined above. But would this work well for a game board generated with Random?  
