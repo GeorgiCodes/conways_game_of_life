@@ -13,6 +13,18 @@ At each step in time, the following transitions occur:
 3. Any live cell with more than three live neighbours dies, as if by overcrowding.
 4. Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction.
 
+# How to run
+This version of Conway's Game of Life requires the following flags to be set in `chrome:\\flags`:
+* `Enable Experimental JavaScript`
+
+Open the `index.html` file in your browser and select a preset pattern to get started.
+
+# How to run tests
+The tests were written with Jasmine, they can be run in the browser by opening `jasmine\SpecRunner.html`.
+
+# Grunt
+To run jshint simply run `grunt` from the root directory in the terminal. 
+
 ## Algorithm Implementation
 This version of Conway's Game of Life includes an algorithm optimized for speed. At each step, the game calculates the boundary coordinates of the alive cells. Only cells within these boundaries are iterated over to determine the next transition. This is opposed to a naiive algorithm which would check each and every cell on step for a time complexity of O(M*N).
 
@@ -45,15 +57,3 @@ The above approach is just one way Conway's can be optimized, some other ideas w
 This approach might work well for sparse grids and would certainly reduce unnecessary checking of dead cells with the approach outlined above. But would this work well for a game board generated with Random?  
 ##### Detecting 'stable' formations
 Could we perhaps detect [stable](http://en.wikipedia.org/wiki/Still_life_(cellular_automaton)) formations and therefore not include them in the list of cells to check each transition? This might mean checking to see if a formation's neighbours remain unchanged from transition to transition. 
-
-# How to run
-This version of Conway's Game of Life requires the following flags to be set in `chrome:\\flags`:
-* `Enable Experimental JavaScript`
-
-Open the `index.html` file in your browser and select a preset pattern to get started.
-
-# How to run tests
-The tests were written with Jasmine, they can be run in the browser by opening `jasmine\SpecRunner.html`.
-
-# Grunt
-To run jshint simply run `grunt` from the root directory in the terminal. 
