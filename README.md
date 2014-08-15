@@ -54,6 +54,6 @@ Another drawback to this approach is for some patterns, the algorithm still does
 ### Further thoughts on optimization
 The above approach is just one way Conway's can be optimized, some other ideas which I haven't fully explored include:
 ##### Calculating each live cell's neighbours on each transition
-This approach might work well for sparse grids and would certainly reduce unnecessary checking of dead cells with the approach outlined above. But would this work well for a game board generated with Random?  
+This approach might work well for sparse grids and would certainly reduce unnecessary checking of dead cells with the approach outlined above. But would this work well for a game board generated with Random? How to avoid multiple checks of the same cell?
 ##### Detecting 'stable' formations
 Could we perhaps detect [stable](http://en.wikipedia.org/wiki/Still_life_(cellular_automaton)) formations and therefore not include them in the list of cells to check each transition? This might mean checking to see if a formation's neighbours remain unchanged from transition to transition. 
