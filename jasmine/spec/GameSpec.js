@@ -1,5 +1,8 @@
 describe("Game", function () {
   var game;
+  var maxX = 59;
+  var maxY = 29;
+  var cellSize = 5;
 
   var MockRenderer = function() {};
   MockRenderer.prototype = {
@@ -18,9 +21,6 @@ describe("Game", function () {
     },
     initGameBoard: function(colour) {
       // do nothing
-    },
-    drawRect: function(x, y, w, h) {
-      // do nothing
     }
   };
   var mockRenderer = null;
@@ -35,7 +35,7 @@ describe("Game", function () {
     it("constructs a game object", function () {
 
       expect(game.renderer).toEqual(mockRenderer);
-      expect(game.cellSize).toBe(5);
+      expect(game.cellSize).toBe(cellSize);
       expect(game.cellsArr.length).toBe(0);
       expect(game.minMaxCoords).toBeDefined();
     });
@@ -50,10 +50,10 @@ describe("Game", function () {
     it("calculates min and max x and y based on canvas size", function () {
       var numCells = game.numCells();
 
-      expect(numCells.x).toBe(60);
-      expect(numCells.y).toBe(30);
-      expect(numCells.maxX).toBe(59);
-      expect(numCells.maxY).toBe(29);
+      expect(numCells.x).toBe(maxX + 1);
+      expect(numCells.y).toBe(maxY + 1);
+      expect(numCells.maxX).toBe(maxX);
+      expect(numCells.maxY).toBe(maxY);
     });
 
   });
@@ -67,12 +67,12 @@ describe("Game", function () {
     it("initializes all cells as dead", function () {
       game.initCells();
 
-      expect(game.cellsArr.length).toBe(60);
+      expect(game.cellsArr.length).toBe(maxX + 1);
       // check bounds
       expect(game.cellsArr[0][0]).toBe(false);
-      expect(game.cellsArr[59][0]).toBe(false);
+      expect(game.cellsArr[maxX][0]).toBe(false);
       expect(game.cellsArr[0][0]).toBe(false);
-      expect(game.cellsArr[0][29]).toBe(false);
+      expect(game.cellsArr[0][maxY]).toBe(false);
     });
 
   });
@@ -200,8 +200,8 @@ describe("Game", function () {
     }); 
 
     it("updates minMaxCoords maxX when x is on right border to be maxCols", function () {
-      game.setMaxXCoord(59);
-      expect(game.minMaxCoords.maxX).toBe(59);
+      game.setMaxXCoord(maxX);
+      expect(game.minMaxCoords.maxX).toBe(maxX);
     });
 
     it("updates minMaxCoords maxX to be 1 more than x when not on border", function () {
@@ -238,8 +238,8 @@ describe("Game", function () {
     }); 
 
     it("updates minMaxCoords maxY when y is on bottom border to be 0", function () {
-      game.setMaxYCoord(29);
-      expect(game.minMaxCoords.maxY).toBe(29);
+      game.setMaxYCoord(maxY);
+      expect(game.minMaxCoords.maxY).toBe(maxY);
     });
 
     it("updates minMaxCoords maxY to be 1 more than y when not on border", function () {
@@ -249,7 +249,7 @@ describe("Game", function () {
 
   });
 
-  describe("optimizedAlgorithm", function () {
+  describe("transitionCells", function () {
     beforeEach(function() {
       mockRenderer = new MockRenderer();
       game = new Game(mockRenderer);
@@ -262,7 +262,7 @@ describe("Game", function () {
     }); 
 
     it("updates cellsToUpdate array with only the cells that have changed this transition", function () {
-      var cellsToUpdate = game.optimizedAlgorithm();
+      var cellsToUpdate = game.transitionCells();
 
       expect(cellsToUpdate.length).toBe(4);
       expect(cellsToUpdate[0].x).toBe(0);
@@ -280,9 +280,8 @@ describe("Game", function () {
       expect(cellsToUpdate[3].isAlive).toBe(true); 
     });
 
-
     it("updates minMaxCoords boundaries based on newly alive cells", function () {
-      var cellsToUpdate = game.optimizedAlgorithm();
+      var cellsToUpdate = game.transitionCells();
 
       expect(game.minMaxCoords.minX).toBe(0);
       expect(game.minMaxCoords.minY).toBe(0);
@@ -290,5 +289,36 @@ describe("Game", function () {
       expect(game.minMaxCoords.maxY).toBe(2);
     });
 
+  });
+
+  describe("updateGameBoard", function () {
+
+    beforeEach(function() {
+      mockRenderer = new MockRenderer();
+      game = new Game(mockRenderer);
+      game.init();
+      // oscillator
+      game.cellsArr[1][0] = true;
+      game.cellsArr[1][1] = true;
+      game.cellsArr[1][2] = true;
+      game.minMaxCoords = {minX: 0, minY: 0, maxX: 2, maxY: 3};
+
+      spyOn(mockRenderer, 'updateCell');
+    }); 
+
+     it("calls renderer with x, y for each cell to update and updates global cellsArr", function () {
+      var cellsToUpdate = game.transitionCells();
+      game.updateGameBoard(cellsToUpdate, mockRenderer);
+
+      expect(mockRenderer.updateCell).toHaveBeenCalledWith(0, 1, cellSize, true);
+      expect(mockRenderer.updateCell).toHaveBeenCalledWith(1, 0, cellSize, false);
+      expect(mockRenderer.updateCell).toHaveBeenCalledWith(1, 2, cellSize, false);
+      expect(mockRenderer.updateCell).toHaveBeenCalledWith(2, 1, cellSize, true);
+      // expect cellsArr to be updated with new values
+      expect(game.cellsArr[0][1]).toBe(true);
+      expect(game.cellsArr[1][0]).toBe(false);
+      expect(game.cellsArr[1][2]).toBe(false);
+      expect(game.cellsArr[2][1]).toBe(true);
+    });
   });
 });

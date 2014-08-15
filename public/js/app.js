@@ -1,10 +1,6 @@
-const start = "Start";
-const stop = "Stop";
-const rainbow = "rainbow";
-const blue = "blue";
-
 ;(function(exports) {
 	"use strict";
+
   // Main application object
   // ----------------
 
@@ -13,6 +9,8 @@ const blue = "blue";
     var game = new Game(renderer);
     this.game = game;  
     this.renderer = renderer;
+
+    this.initEventListeners();
   };
 
   App.prototype = {
@@ -24,19 +22,61 @@ const blue = "blue";
       this.game.step();
     },
     performAction: function(action) {
-      if (action == start) {
+      if (action == "Start") {
         this.game.start();
       }
-      if (action == stop) {
+      if (action == "Stop") {
         this.game.stop();
       }
     },
     setCellColour: function(style) {
-      if (style == rainbow) {
+      if (style == "rainbow") {
         this.renderer.isRainbow = true;
       } else {
         this.renderer.isRainbow = false; 
       }
+    },
+    initEventListeners: function() {
+      var stepButton = document.getElementById("stepSim");
+      var startButton = document.getElementById("startSim");
+      var oscillatorBtn = document.getElementById("oscillator");
+      var gliderBtn = document.getElementById("glider");
+      var acornBtn = document.getElementById("acorn");
+      var randomBtn = document.getElementById("random");
+      var gosperGunBtn = document.getElementById("gosperGun");
+      var rainbowBtn = document.getElementById("rainbow");  
+      var blueBtn = document.getElementById("blue");  
+
+      var self = this;
+
+      stepButton.addEventListener('click', this.step.bind(this));
+      startButton.addEventListener('click', function() {
+        var currentAction = startButton.innerHTML;
+        self.performAction(currentAction);
+        startButton.innerHTML = (currentAction == "Stop") ? "Start" : "Stop";
+      }, false);
+
+      oscillatorBtn.addEventListener('click', function() {
+        self.seed("oscillator");
+      }, false);
+      gliderBtn.addEventListener('click', function() {
+        self.seed("glider");
+      }, false);
+      randomBtn.addEventListener('click', function() {
+        self.seed("random");
+      }, false);
+      gosperGunBtn.addEventListener('click', function() {
+        self.seed("gosperGun");
+      }, false);
+      acornBtn.addEventListener('click', function() {
+        self.seed("acorn");
+      }, false);
+      rainbowBtn.addEventListener('click', function() {
+        self.setCellColour("rainbow");
+      }, false);
+      blueBtn.addEventListener('click', function() {
+        self.setCellColour("blue");
+      }, false);
     }
   }
 
@@ -51,43 +91,4 @@ const blue = "blue";
 // When the DOM is ready, create (and start) the game.
 window.onload = function() {
   var app = new App();
-
-  var stepButton = document.getElementById("stepSim");
-  var startButton = document.getElementById("startSim");
-  var oscillatorBtn = document.getElementById("oscillator");
-  var gliderBtn = document.getElementById("glider");
-  var acornBtn = document.getElementById("acorn");
-  var randomBtn = document.getElementById("random");
-  var gosperGunBtn = document.getElementById("gosperGun");
-  var rainbowBtn = document.getElementById("rainbow");  
-  var blueBtn = document.getElementById("blue");  
-
-  stepButton.addEventListener('click', app.step.bind(app));
-  startButton.addEventListener('click', function() {
-    var currentAction = startButton.innerHTML;
-    app.performAction(currentAction);
-    startButton.innerHTML = (currentAction == stop) ? start : stop ;
-  }, false);
-
-  oscillatorBtn.addEventListener('click', function() {
-    app.seed("oscillator");
-  }, false);
-  gliderBtn.addEventListener('click', function() {
-    app.seed("glider");
-  }, false);
-  randomBtn.addEventListener('click', function() {
-    app.seed("random");
-  }, false);
-  gosperGunBtn.addEventListener('click', function() {
-    app.seed("gosperGun");
-  }, false);
-  acornBtn.addEventListener('click', function() {
-    app.seed("acorn");
-  }, false);
-  rainbowBtn.addEventListener('click', function() {
-    app.setCellColour(rainbow);
-  }, false);
-  blueBtn.addEventListener('click', function() {
-    app.setCellColour(blue);
-  }, false);
 };

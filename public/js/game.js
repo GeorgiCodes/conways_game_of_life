@@ -7,9 +7,9 @@
   // Creates the game object with the game state and logic.
   var Game = function(renderer) {
     this.renderer = renderer;
-    this.cellSize = 5;
-    this.cellsArr = [];
+    this.cellsArr = []; // keeps track of all cells live/dead state
     this.minMaxCoords = {};
+    this.cellSize = 5;
   };
 
   Game.prototype = {
@@ -51,31 +51,10 @@
     },
     step: function() {
       // runs the main game logic and updates canvas
-      // var cellsToUpdate = this.naiiveAlgorithm(); // uncomment this line to see game run with naiive algorithm
-      var cellsToUpdate = this.optimizedAlgorithm();
+      var cellsToUpdate = this.transitionCells();
       this.updateGameBoard(cellsToUpdate, this.renderer);
     },
-    naiiveAlgorithm: function() {
-      // NOT currently used, see this.optimizedAlgorithm()
-      // This is a naiive algorithm implementation of Conway's Game of Life rules.
-      // It look at entire board for O(numRows * numCols) runtime complexity.
-
-      var cellsToUpdate = [];
-
-      for (var i = 0; i < this.numCells().x; i++) {
-        for (var j = 0; j < this.numCells().y; j++) {
-          var isAlive = this.cellsArr[i][j];
-          var numNbrs = this.countAliveNeighbours(i, j);
-          var cellAliveNextStep = this.isCellAliveOnNextStep(isAlive, numNbrs);
-
-          if (this.hasCellChangedFromPreviousStep(isAlive, cellAliveNextStep)) {
-            cellsToUpdate.push(new Cell(i, j, cellAliveNextStep));
-          }
-        }
-      }
-      return cellsToUpdate;
-    },
-    optimizedAlgorithm: function() {
+    transitionCells: function() {
       // This is an optimized algorithm for Conway's Game of Life.
       // This algorithm does not iterate over the entire game board.
       // Instead, it keeps track of the max and min x and y coords that contain the live cells
@@ -180,6 +159,10 @@
       }
     },
     updateGameBoard: function(cellsToUpdate, renderer) {
+      if (cellsToUpdate == null) {
+        return;
+      }
+
       // repaint only the cells which have changed
       for (var i = 0; i < cellsToUpdate.length; i++) {
         var cell = cellsToUpdate[i];
